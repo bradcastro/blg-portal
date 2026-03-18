@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLG Leader Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold:#C9922A; --gold-light:#F0C96A; --gold-pale:#FDF6E3;
+    --navy:#0F1F3D; --navy-light:#2B4D8C;
+    --cream:#FBF8F2; --warm-white:#FFFDF8;
+    --text-dark:#1A1208; --text-mid:#4A3F2F; --text-soft:#8C7B5E;
+    --green:#2A9D5C; --red:#C23B3B;
+    --border:rgba(201,146,42,0.2);
+    --shadow:0 4px 24px rgba(15,31,61,0.10);
+    --shadow-lg:0 12px 48px rgba(15,31,61,0.16);
+    --r:12px; --r-lg:20px;
+  }
+  body { font-family:'DM Sans',sans-serif; background:var(--navy); min-height:100vh; color:var(--text-dark); overflow-x:hidden; }
+
+  /* HERO */
+  .hero { background:linear-gradient(160deg,#0F1F3D 0%,#1A3260 50%,#0D1830 100%); padding:0 20px 60px; text-align:center; position:relative; overflow:hidden; }
+  .hero::before { content:''; position:absolute; inset:0; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1' fill='%23C9922A' opacity='0.12'/%3E%3C/svg%3E") repeat; pointer-events:none; }
+  .hero-inner { max-width:720px; margin:0 auto; position:relative; z-index:1; }
+  .nav { display:flex; align-items:center; justify-content:space-between; padding:24px 0 40px; flex-wrap:wrap; gap:12px; }
+  .logo-area { display:flex; align-items:center; gap:12px; }
+  .logo-icon { width:44px; height:44px; background:var(--gold); border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--navy); flex-shrink:0; }
+  .logo-text { font-family:'Playfair Display',serif; font-size:18px; color:#fff; line-height:1.1; }
+  .logo-sub { font-size:11px; color:rgba(255,255,255,0.5); font-weight:300; letter-spacing:0.08em; text-transform:uppercase; }
+  .nav-links { display:flex; gap:8px; flex-wrap:wrap; }
+  .nav-btn { padding:8px 18px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; cursor:pointer; border:none; transition:all 0.2s; }
+  .nav-btn.outline { background:transparent; border:1.5px solid rgba(255,255,255,0.25); color:rgba(255,255,255,0.85); }
+  .nav-btn.outline:hover { border-color:var(--gold); color:var(--gold); }
+  .nav-btn.filled { background:var(--gold); color:var(--navy); }
+  .nav-btn.filled:hover { background:var(--gold-light); }
+  .hero-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(201,146,42,0.15); border:1px solid rgba(201,146,42,0.3); border-radius:100px; padding:6px 14px; font-size:12px; font-weight:500; color:var(--gold-light); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:20px; }
+  .hero-badge::before { content:'✦'; font-size:10px; }
+  .hero h1 { font-family:'Playfair Display',serif; font-size:clamp(28px,6vw,54px); font-weight:700; color:#fff; line-height:1.15; margin-bottom:16px; }
+  .hero h1 span { color:var(--gold-light); }
+  .hero-sub { font-size:clamp(14px,2vw,17px); color:rgba(255,255,255,0.6); line-height:1.7; max-width:560px; margin:0 auto 36px; }
+  .hero-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .btn-primary { background:var(--gold); color:var(--navy); border:none; padding:14px 30px; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:all 0.2s; }
+  .btn-primary:hover { background:var(--gold-light); transform:translateY(-1px); }
+  .btn-secondary { background:rgba(255,255,255,0.08); color:#fff; border:1.5px solid rgba(255,255,255,0.2); padding:14px 30px; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:500; cursor:pointer; transition:all 0.2s; }
+  .btn-secondary:hover { background:rgba(255,255,255,0.14); }
+
+  /* MAIN */
+  .main { background:var(--cream); min-height:100vh; }
+  .main-inner { max-width:900px; margin:0 auto; padding:60px 20px 100px; }
+
+  /* TABS */
+  .tab-bar { display:flex; background:var(--navy); border-radius:var(--r-lg); padding:6px; gap:4px; margin-bottom:48px; box-shadow:var(--shadow-lg); }
+  .tab-btn { flex:1; padding:14px 10px; border-radius:10px; border:none !important; background:transparent !important; font-family:'DM Sans',sans-serif !important; font-size:14px !important; font-weight:600 !important; color:#ffffff !important; cursor:pointer; transition:all 0.2s; white-space:nowrap; opacity:0.65; }
+  .tab-btn:hover { opacity:1; background:rgba(255,255,255,0.1) !important; }
+  .tab-btn.active { background:var(--gold) !important; color:var(--navy) !important; opacity:1; font-weight:700 !important; box-shadow:0 2px 10px rgba(201,146,42,0.4); }
+
+  .panel { display:none; }
+  .panel.active { display:block; }
+  .section-head { margin-bottom:32px; }
+  .section-head h2 { font-family:'Playfair Display',serif; font-size:28px; font-weight:700; color:var(--navy); margin-bottom:6px; }
+  .section-head p { font-size:15px; color:var(--text-soft); line-height:1.6; }
+  .gold-line { width:40px; height:3px; background:var(--gold); border-radius:2px; margin-bottom:16px; }
+  .card { background:#fff; border-radius:var(--r-lg); border:1px solid var(--border); padding:32px 36px; box-shadow:var(--shadow); margin-bottom:20px; }
+  @media(max-width:600px){ .card { padding:20px 16px; } }
+
+  /* FORM */
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+  @media(max-width:600px){ .form-grid { grid-template-columns:1fr; } }
+  .form-group { display:flex; flex-direction:column; gap:6px; }
+  .form-group.full { grid-column:1/-1; }
+  label { font-size:13px; font-weight:500; color:var(--text-mid); letter-spacing:0.02em; }
+  input[type=text], input[type=email], input[type=date], input[type=number], select {
+    width:100%; padding:11px 14px; border:1.5px solid #E8E0D0; border-radius:9px;
+    font-family:'DM Sans',sans-serif; font-size:15px; color:var(--text-dark);
+    background:var(--warm-white); transition:border-color 0.2s,box-shadow 0.2s,opacity 0.2s; outline:none; -webkit-appearance:none;
+  }
+  input:focus, select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,146,42,0.12); }
+  input.field-ok { border-color:var(--green); box-shadow:0 0 0 3px rgba(42,157,92,0.1); }
+  input.field-error { border-color:var(--red); box-shadow:0 0 0 3px rgba(194,59,59,0.1); }
+  .field-hint { font-size:12px; color:var(--text-soft); }
+  .submit-btn { width:100%; padding:14px; background:var(--navy); color:#fff; border:none; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:all 0.2s; }
+  .submit-btn:hover:not(:disabled) { background:var(--navy-light); transform:translateY(-1px); }
+  .submit-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+  .submit-btn.gold { background:var(--gold); color:var(--navy); }
+  .submit-btn.gold:hover:not(:disabled) { background:var(--gold-light); }
+  .submit-btn.danger { background:var(--red); color:#fff; }
+
+  /* STATE FIELD ANIMATION */
+  .state-row { display:none; }
+  .state-row.show { display:contents; }
+  .state-field-wrap { overflow:hidden; max-height:0; opacity:0; transition:max-height 0.35s ease, opacity 0.3s ease; }
+  .state-field-wrap.show { max-height:100px; opacity:1; }
+
+  /* SPINNER */
+  .spinner { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; vertical-align:middle; margin-right:6px; }
+  .spinner.dark { border-color:rgba(0,0,0,0.12); border-top-color:var(--gold); }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* BOXES */
+  .info-box { background:var(--gold-pale); border:1px solid rgba(201,146,42,0.25); border-radius:10px; padding:12px 16px; font-size:14px; color:var(--text-mid); margin-bottom:20px; line-height:1.6; }
+  .info-box strong { color:var(--text-dark); }
+
+  /* ID LOOKUP */
+  .id-wrap { position:relative; }
+  .id-status { position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:15px; pointer-events:none; }
+  .verified-box { display:none; background:#F0FAF4; border:1.5px solid var(--green); border-radius:9px; padding:10px 14px; margin-top:8px; font-size:14px; color:#1A5C38; align-items:center; gap:8px; }
+  .verified-box.show { display:flex; }
+  .err-box { display:none; background:#FFF0F0; border:1.5px solid var(--red); border-radius:9px; padding:10px 14px; margin-top:8px; font-size:14px; color:#7A1F1F; }
+  .err-box.show { display:block; }
+
+  /* SUCCESS CARD */
+  .success-card { background:linear-gradient(135deg,#0F1F3D,#1A3260); border-radius:var(--r-lg); padding:40px; text-align:center; display:none; }
+  .success-card h3 { font-family:'Playfair Display',serif; font-size:24px; color:#fff; margin-bottom:10px; }
+  .success-card p { color:rgba(255,255,255,0.6); font-size:15px; margin-bottom:16px; }
+  .uid-badge { display:inline-block; background:rgba(201,146,42,0.2); border:1.5px solid var(--gold); color:var(--gold-light); font-size:22px; font-weight:600; letter-spacing:0.12em; padding:12px 28px; border-radius:10px; margin:4px; }
+
+  /* WEEK BADGE */
+  .week-badge { display:inline-flex; align-items:center; gap:8px; background:var(--navy); color:var(--gold-light); border-radius:8px; padding:8px 16px; font-size:13px; font-weight:500; margin-bottom:24px; }
+
+  /* TRANSFER */
+  .transfer-section { border-top:1px solid var(--border); margin-top:28px; padding-top:24px; }
+  .transfer-toggle { display:flex; align-items:center; gap:10px; cursor:pointer; color:var(--red); font-size:14px; font-weight:500; background:none; border:1.5px solid rgba(194,59,59,0.3); border-radius:9px; padding:10px 16px; width:100%; justify-content:center; transition:all 0.2s; }
+  .transfer-toggle:hover { background:#FFF0F0; }
+  .transfer-form { display:none; margin-top:20px; }
+  .transfer-form.show { display:block; }
+  .transfer-warning { background:#FFF0F0; border:1px solid rgba(194,59,59,0.25); border-radius:9px; padding:12px 16px; font-size:13px; color:#7A1F1F; margin-bottom:16px; line-height:1.6; }
+
+  /* CONFIRM GRID */
+  .confirm-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:16px 0; }
+  .confirm-cell { background:var(--cream); border-radius:9px; padding:12px 16px; }
+  .confirm-label { font-size:11px; color:var(--text-soft); text-transform:uppercase; letter-spacing:0.07em; margin-bottom:3px; }
+  .confirm-value { font-size:15px; font-weight:600; color:var(--navy); }
+
+  /* CHECKIN SUCCESS */
+  .checkin-success { text-align:center; padding:20px 0; display:none; }
+  .checkin-success h3 { font-family:'Playfair Display',serif; font-size:22px; color:var(--navy); margin:12px 0 6px; }
+  .checkin-success p { color:var(--text-soft); font-size:14px; }
+  .btn-outline { background:transparent; border:1.5px solid #E8E0D0; color:var(--navy); width:100%; padding:12px; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; margin-top:8px; transition:all 0.2s; }
+  .btn-outline:hover { border-color:var(--navy); }
+  .section-label { font-size:11px; font-weight:600; color:var(--text-soft); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:14px; }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:24px; right:24px; background:var(--navy); color:#fff; border-radius:12px; padding:13px 18px; font-size:14px; font-weight:500; box-shadow:var(--shadow-lg); border-left:4px solid var(--gold); transform:translateY(80px); opacity:0; transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1); z-index:1000; max-width:320px; }
+  .toast.show { transform:translateY(0); opacity:1; }
+  .toast.error { border-left-color:var(--red); }
+  .toast.success { border-left-color:var(--green); }
+  .divider { border:none; border-top:1px solid var(--border); margin:24px 0; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <nav class="nav">
+      <div class="logo-area">
+        <div class="logo-icon">BLG</div>
+        <div><div class="logo-text">Bible Listening Groups</div><div class="logo-sub">Leader Portal</div></div>
+      </div>
+      <div class="nav-links">
+        <button class="nav-btn outline" onclick="setTab('register')">Register</button>
+        <button class="nav-btn filled" onclick="setTab('checkin')">Check-In</button>
+      </div>
+    </nav>
+    <div class="hero-badge">Global Leader Network</div>
+    <h1>"So faith comes from <span>hearing</span>,<br>and hearing through the Word."</h1>
+    <p class="hero-sub">Connect with BLG leaders worldwide. Register your group, log your weekly gatherings, and watch the Word spread through your network.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="setTab('register')">Register as a Leader</button>
+      <button class="btn-secondary" onclick="setTab('checkin')">Weekly Check-In</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="main-inner">
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tab-register" onclick="setTab('register')">✦ Register</button>
+      <button class="tab-btn" id="tab-checkin" onclick="setTab('checkin')">📋 Weekly Check-In</button>
+    </div>
+
+    <!-- ── REGISTER ── -->
+    <div class="panel active" id="panel-register">
+      <div class="section-head">
+        <div class="gold-line"></div>
+        <h2>Leader Registration</h2>
+        <p>Register once. Your first group is created automatically and you'll receive your Group ID on the next screen.</p>
+      </div>
+      <div class="card" id="reg-form-card">
+        <div class="section-label">Your Information</div>
+        <div class="form-grid">
+          <div class="form-group"><label>First Name *</label><input type="text" id="reg-first" placeholder="Your first name"></div>
+          <div class="form-group"><label>Last Name *</label><input type="text" id="reg-last" placeholder="Your last name"></div>
+          <div class="form-group"><label>Email Address *</label><input type="email" id="reg-email" placeholder="your@email.com"></div>
+          <div class="form-group"><label>Phone Number</label><input type="text" id="reg-phone" placeholder="+1 (555) 000-0000"></div>
+
+          <!-- COUNTRY — triggers state field -->
+          <div class="form-group">
+            <label>Country *</label>
+            <select id="reg-country" onchange="onCountryChange('reg')">
+              <option value="">Select country...</option>
+              <option>United States</option><option>Canada</option><option>Australia</option>
+              <option>United Kingdom</option><option>Nigeria</option><option>Kenya</option>
+              <option>South Africa</option><option>Ghana</option><option>Uganda</option>
+              <option>Tanzania</option><option>Rwanda</option><option>Ethiopia</option>
+              <option>Zimbabwe</option><option>Liberia</option><option>Philippines</option>
+              <option>India</option><option>Brazil</option><option>Mexico</option>
+              <option>Colombia</option><option>Germany</option><option>France</option>
+              <option>Netherlands</option><option>South Korea</option><option>Indonesia</option>
+              <option>Malaysia</option><option>Singapore</option><option>New Zealand</option>
+              <option>Jamaica</option><option>Trinidad and Tobago</option><option>Other</option>
+            </select>
+          </div>
+
+          <!-- STATE/PROVINCE — appears dynamically -->
+          <div class="form-group" id="reg-state-group" style="display:none">
+            <label id="reg-state-label">State *</label>
+            <select id="reg-state"><option value="">Select...</option></select>
+          </div>
+
+          <div class="form-group"><label>City *</label><input type="text" id="reg-city" placeholder="Your city"></div>
+
+          <div class="form-group full">
+            <label>Referred By (Leader's Group ID)</label>
+            <input type="text" id="reg-referral" placeholder="e.g. BLG-00001">
+            <span class="field-hint">The Group ID of the leader who trained you. Leave blank if none.</span>
+          </div>
+        </div>
+        <button class="submit-btn gold" id="reg-btn" onclick="submitRegistration()">Register as a BLG Leader →</button>
+      </div>
+
+      <div class="success-card" id="reg-success">
+        <div style="font-size:44px;margin-bottom:14px">✦</div>
+        <h3>Welcome to the BLG Network!</h3>
+        <p>Your registration is confirmed. This is your Group ID — write it down. You will use it every week to log your attendance.</p>
+        <div style="margin:20px 0">
+          <div style="font-size:11px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px">Your Group ID</div>
+          <div class="uid-badge" id="reg-group-uid">BLG-00000</div>
+        </div>
+        <p style="color:rgba(255,255,255,0.4);font-size:13px;margin-top:4px">Keep this ID safe. You will need it every time you log your weekly attendance.</p>
+        <button class="submit-btn" style="margin-top:28px;background:var(--gold);color:var(--navy)" onclick="setTab('checkin')">Go to Weekly Check-In →</button>
+      </div>
+    </div>
+
+    <!-- ── CHECK-IN ── -->
+    <div class="panel" id="panel-checkin">
+      <div class="section-head">
+        <div class="gold-line"></div>
+        <h2>Weekly Check-In</h2>
+        <p>Enter your Group ID to log attendance, or transfer the group to a new leader.</p>
+      </div>
+      <div class="card">
+        <div class="week-badge">📅 Current Week: <span id="current-week-label">—</span></div>
+
+        <div id="ci-main">
+          <div class="info-box"><strong>Registered groups only.</strong> Enter your Group ID — it will be verified against the BLG registry before your check-in is accepted.</div>
+
+          <div class="form-group" style="margin-bottom:16px">
+            <label>Group ID *</label>
+            <div style="display:flex;gap:10px;align-items:flex-start">
+              <div class="id-wrap" style="flex:1">
+                <input type="text" id="ci-group-uid" placeholder="BLG-00001" style="text-transform:uppercase;padding-right:36px" oninput="onGroupUidInput(this)" onkeydown="if(event.key==='Enter')verifyGroupNow()">
+                <span class="id-status" id="ci-group-icon"></span>
+              </div>
+              <button onclick="verifyGroupNow()" style="padding:11px 20px;background:var(--navy);color:#fff;border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all 0.2s" onmouseover="this.style.background='var(--navy-light)'" onmouseout="this.style.background='var(--navy)'">Verify →</button>
+            </div>
+            <div class="verified-box" id="ci-group-verified">
+              <span>✅</span>
+              <div><strong id="ci-group-name">—</strong><br><span style="font-size:12px;color:var(--text-soft)" id="ci-group-meta">—</span></div>
+            </div>
+            <div class="err-box" id="ci-group-error">
+              ❌ Group ID not found in the BLG registry. Please check your ID or <a style="color:#8B2020;cursor:pointer;text-decoration:underline" onclick="setTab('register')">register here</a>.
+            </div>
+          </div>
+
+          <div id="ci-attendance" style="display:none">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+              <div class="form-group">
+                <label>Attendees This Week *</label>
+                <input type="number" id="ci-count" placeholder="e.g. 12" min="1" max="9999">
+              </div>
+              <div class="form-group">
+                <label>Date of Meeting *</label>
+                <input type="date" id="ci-date">
+              </div>
+            </div>
+            <button class="submit-btn gold" id="ci-btn" onclick="submitCheckin()">Submit Weekly Check-In →</button>
+            <p style="font-size:13px;color:var(--text-soft);margin-top:12px;text-align:center">Not your group? <a style="color:var(--gold);cursor:pointer;text-decoration:underline" onclick="resetCheckin()">Use a different Group ID</a></p>
+
+            <!-- TRANSFER -->
+            <div class="transfer-section">
+              <button class="transfer-toggle" onclick="toggleTransfer()">↗ Transfer Leadership of This Group</button>
+              <div class="transfer-form" id="transfer-form">
+                <div class="transfer-warning"><strong>Important:</strong> This registers the new person as a BLG leader and transfers this group to them. The group history is preserved and continues to count toward your Global Impact report.</div>
+                <div class="section-label">New Leader's Information</div>
+                <div class="form-grid">
+                  <div class="form-group"><label>First Name *</label><input type="text" id="tr-first" placeholder="New leader's first name"></div>
+                  <div class="form-group"><label>Last Name *</label><input type="text" id="tr-last" placeholder="New leader's last name"></div>
+                  <div class="form-group"><label>Email Address *</label><input type="email" id="tr-email" placeholder="their@email.com"></div>
+                  <div class="form-group"><label>Phone Number</label><input type="text" id="tr-phone" placeholder="+1 (555) 000-0000"></div>
+                  <div class="form-group">
+                    <label>Country *</label>
+                    <select id="tr-country" onchange="onCountryChange('tr')">
+                      <option value="">Select country...</option>
+                      <option>United States</option><option>Canada</option><option>Australia</option>
+                      <option>United Kingdom</option><option>Nigeria</option><option>Kenya</option>
+                      <option>South Africa</option><option>Ghana</option><option>Uganda</option>
+                      <option>Tanzania</option><option>Rwanda</option><option>Ethiopia</option>
+                      <option>Zimbabwe</option><option>Liberia</option><option>Philippines</option>
+                      <option>India</option><option>Brazil</option><option>Mexico</option>
+                      <option>Colombia</option><option>Germany</option><option>France</option>
+                      <option>Netherlands</option><option>South Korea</option><option>Indonesia</option>
+                      <option>Malaysia</option><option>Singapore</option><option>New Zealand</option>
+                      <option>Jamaica</option><option>Trinidad and Tobago</option><option>Other</option>
+                    </select>
+                  </div>
+                  <div class="form-group" id="tr-state-group" style="display:none">
+                    <label id="tr-state-label">State *</label>
+                    <select id="tr-state"><option value="">Select...</option></select>
+                  </div>
+                  <div class="form-group"><label>City *</label><input type="text" id="tr-city" placeholder="Their city"></div>
+                  <div class="form-group full">
+                    <label>Referred By (Group ID of who trained them)</label>
+                    <input type="text" id="tr-referral" placeholder="BLG-00001">
+                    <span class="field-hint">Leave blank if you are their trainer — you will be set automatically.</span>
+                  </div>
+                </div>
+                <button class="submit-btn danger" id="tr-btn" onclick="submitTransfer()">Confirm Transfer of Leadership →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHECKIN SUCCESS -->
+        <div class="checkin-success" id="ci-success">
+          <div style="font-size:48px">🙏</div>
+          <h3>Check-In Recorded!</h3>
+          <p>Your attendance has been logged in the BLG registry.</p>
+          <div class="confirm-grid">
+            <div class="confirm-cell"><div class="confirm-label">Group ID</div><div class="confirm-value" id="ci-conf-uid">—</div></div>
+            <div class="confirm-cell"><div class="confirm-label">Attendees</div><div class="confirm-value" id="ci-conf-count">—</div></div>
+            <div class="confirm-cell"><div class="confirm-label">Meeting Date</div><div class="confirm-value" id="ci-conf-date">—</div></div>
+            <div class="confirm-cell"><div class="confirm-label">Week</div><div class="confirm-value" id="ci-conf-week">—</div></div>
+          </div>
+          <button class="btn-outline" onclick="resetCheckin()">Log Another Group</button>
+        </div>
+
+        <!-- TRANSFER SUCCESS -->
+        <div class="checkin-success" id="tr-success">
+          <div style="font-size:48px">✦</div>
+          <h3>Group Transferred!</h3>
+          <p id="tr-success-msg">The group has been transferred successfully.</p>
+          <div class="confirm-grid">
+            <div class="confirm-cell"><div class="confirm-label">Group ID</div><div class="confirm-value" id="tr-conf-uid">—</div></div>
+            <div class="confirm-cell"><div class="confirm-label">New Leader ID</div><div class="confirm-value" id="tr-conf-new-uid">—</div></div>
+          </div>
+          <p style="font-size:13px;color:var(--text-soft);margin-top:4px">This group continues to count toward your Global Impact report.</p>
+          <button class="submit-btn gold" style="margin-top:16px" onclick="resetCheckin()">Done</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbwfPc0-Kb77qlCH4-4NX2f0C6vuaFPH1Cb2HQwV6Wh4xm7-6KCdpcym1Bz0g9C8qKm0SA/exec';
+
+// ── STATE / PROVINCE DATA ──────────────────────────────────────
+const STATE_DATA = {
+  'United States': {
+    label: 'State *',
+    options: ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming','Washington D.C.','Puerto Rico','Guam','U.S. Virgin Islands']
+  },
+  'Canada': {
+    label: 'Province / Territory *',
+    options: ['Alberta','British Columbia','Manitoba','New Brunswick','Newfoundland and Labrador','Northwest Territories','Nova Scotia','Nunavut','Ontario','Prince Edward Island','Quebec','Saskatchewan','Yukon']
+  },
+  'Australia': {
+    label: 'State / Territory *',
+    options: ['Australian Capital Territory','New South Wales','Northern Territory','Queensland','South Australia','Tasmania','Victoria','Western Australia']
+  },
+  'India': {
+    label: 'State *',
+    options: ['Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat','Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal','Delhi','Jammu and Kashmir','Ladakh']
+  },
+  'Brazil': {
+    label: 'State *',
+    options: ['Acre','Alagoas','Amapá','Amazonas','Bahia','Ceará','Distrito Federal','Espírito Santo','Goiás','Maranhão','Mato Grosso','Mato Grosso do Sul','Minas Gerais','Pará','Paraíba','Paraná','Pernambuco','Piauí','Rio de Janeiro','Rio Grande do Norte','Rio Grande do Sul','Rondônia','Roraima','Santa Catarina','São Paulo','Sergipe','Tocantins']
+  },
+  'Mexico': {
+    label: 'State *',
+    options: ['Aguascalientes','Baja California','Baja California Sur','Campeche','Chiapas','Chihuahua','Coahuila','Colima','Durango','Guanajuato','Guerrero','Hidalgo','Jalisco','Mexico City','Mexico State','Michoacán','Morelos','Nayarit','Nuevo León','Oaxaca','Puebla','Querétaro','Quintana Roo','San Luis Potosí','Sinaloa','Sonora','Tabasco','Tamaulipas','Tlaxcala','Veracruz','Yucatán','Zacatecas']
+  },
+  'Nigeria': {
+    label: 'State *',
+    options: ['Abia','Adamawa','Akwa Ibom','Anambra','Bauchi','Bayelsa','Benue','Borno','Cross River','Delta','Ebonyi','Edo','Ekiti','Enugu','FCT - Abuja','Gombe','Imo','Jigawa','Kaduna','Kano','Katsina','Kebbi','Kogi','Kwara','Lagos','Nasarawa','Niger','Ogun','Ondo','Osun','Oyo','Plateau','Rivers','Sokoto','Taraba','Yobe','Zamfara']
+  },
+  'South Africa': {
+    label: 'Province *',
+    options: ['Eastern Cape','Free State','Gauteng','KwaZulu-Natal','Limpopo','Mpumalanga','North West','Northern Cape','Western Cape']
+  },
+  'Kenya': {
+    label: 'County *',
+    options: ['Baringo','Bomet','Bungoma','Busia','Elgeyo-Marakwet','Embu','Garissa','Homa Bay','Isiolo','Kajiado','Kakamega','Kericho','Kiambu','Kilifi','Kirinyaga','Kisii','Kisumu','Kitui','Kwale','Laikipia','Lamu','Machakos','Makueni','Mandera','Marsabit','Meru','Migori','Mombasa','Murang\'a','Nairobi','Nakuru','Nandi','Narok','Nyamira','Nyandarua','Nyeri','Samburu','Siaya','Taita-Taveta','Tana River','Tharaka-Nithi','Trans Nzoia','Turkana','Uasin Gishu','Vihiga','Wajir','West Pokot']
+  },
+  'Philippines': {
+    label: 'Region / Province *',
+    options: ['Metro Manila','Ilocos Region','Cagayan Valley','Central Luzon','CALABARZON','MIMAROPA','Bicol Region','Western Visayas','Central Visayas','Eastern Visayas','Zamboanga Peninsula','Northern Mindanao','Davao Region','SOCCSKSARGEN','Caraga','BARMM','Cordillera Administrative Region']
+  },
+  'Indonesia': {
+    label: 'Province *',
+    options: ['Aceh','Bali','Bangka Belitung Islands','Banten','Bengkulu','Central Java','Central Kalimantan','Central Sulawesi','East Java','East Kalimantan','East Nusa Tenggara','Gorontalo','Jakarta','Jambi','Lampung','Maluku','North Kalimantan','North Maluku','North Sulawesi','North Sumatra','Papua','Riau','Riau Islands','South Kalimantan','South Sulawesi','South Sumatra','Southeast Sulawesi','West Java','West Kalimantan','West Nusa Tenggara','West Papua','West Sulawesi','West Sumatra','Yogyakarta']
+  },
+  'Ghana': {
+    label: 'Region *',
+    options: ['Ahafo','Ashanti','Bono','Bono East','Central','Eastern','Greater Accra','North East','Northern','Oti','Savannah','Upper East','Upper West','Volta','Western','Western North']
+  },
+  'Ethiopia': {
+    label: 'Region *',
+    options: ['Addis Ababa','Afar','Amhara','Benishangul-Gumuz','Dire Dawa','Gambela','Harari','Oromia','Sidama','Somali','South West Ethiopia','Southern Nations','Tigray']
+  },
+  'Uganda': {
+    label: 'Region *',
+    options: ['Central','Eastern','Northern','Western']
+  },
+  'Tanzania': {
+    label: 'Region *',
+    options: ['Arusha','Dar es Salaam','Dodoma','Geita','Iringa','Kagera','Katavi','Kigoma','Kilimanjaro','Lindi','Manyara','Mara','Mbeya','Morogoro','Mtwara','Mwanza','Njombe','Pemba North','Pemba South','Pwani','Rukwa','Ruvuma','Shinyanga','Simiyu','Singida','Songwe','Tabora','Tanga','Zanzibar']
+  },
+  'Colombia': {
+    label: 'Department *',
+    options: ['Amazonas','Antioquia','Arauca','Atlántico','Bolívar','Boyacá','Caldas','Caquetá','Casanare','Cauca','Cesar','Chocó','Córdoba','Cundinamarca','Guainía','Guaviare','Huila','La Guajira','Magdalena','Meta','Nariño','Norte de Santander','Putumayo','Quindío','Risaralda','San Andrés','Santander','Sucre','Tolima','Valle del Cauca','Vaupés','Vichada','Bogotá D.C.']
+  }
+};
+
+function onCountryChange(prefix) {
+  const country = document.getElementById(prefix + '-country').value;
+  const stateGroup = document.getElementById(prefix + '-state-group');
+  const stateLabel = document.getElementById(prefix + '-state-label');
+  const stateSelect = document.getElementById(prefix + '-state');
+
+  if (STATE_DATA[country]) {
+    const data = STATE_DATA[country];
+    stateLabel.textContent = data.label;
+    stateSelect.innerHTML = '<option value="">Select...</option>';
+    data.options.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s; opt.textContent = s;
+      stateSelect.appendChild(opt);
+    });
+    stateGroup.style.display = 'flex';
+    stateGroup.style.flexDirection = 'column';
+    stateGroup.style.gap = '6px';
+    // Animate in
+    stateSelect.style.opacity = '0';
+    setTimeout(() => { stateSelect.style.opacity = '1'; }, 50);
+  } else {
+    stateGroup.style.display = 'none';
+    stateSelect.value = '';
+  }
+}
+
+// ── SESSION ──
+function getSession(){ try{return JSON.parse(localStorage.getItem('blg_s'))||{};}catch(e){return{};} }
+function setSession(d){ try{localStorage.setItem('blg_s',JSON.stringify(d));}catch(e){} }
+
+// ── API ──
+async function apiPost(p){ const r=await fetch(API,{method:'POST',body:JSON.stringify(p),headers:{'Content-Type':'text/plain'}}); return r.json(); }
+async function apiGet(p){ const r=await fetch(`${API}?${new URLSearchParams(p)}`); return r.json(); }
+
+// ── WEEK HELPERS ──
+function getWeekKey(ds){ const p=ds.split('-'); const d=new Date(+p[0],+p[1]-1,+p[2]); const day=d.getDay(); const mon=new Date(d); mon.setDate(d.getDate()-((day+6)%7)); const j=new Date(mon.getFullYear(),0,1); return `${mon.getFullYear()}-W${String(Math.ceil(((mon-j)/86400000+j.getDay()+1)/7)).padStart(2,'0')}`; }
+function todayStr(){ const t=new Date(); return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`; }
+function getWeekRange(){ const t=new Date(); const d=t.getDay(); const mon=new Date(t); mon.setDate(t.getDate()-((d+6)%7)); const sun=new Date(mon); sun.setDate(mon.getDate()+6); const f=x=>x.toLocaleDateString('en-US',{month:'short',day:'numeric'}); return `${f(mon)} – ${f(sun)}, ${sun.getFullYear()}`; }
+function fmtDate(s){ const p=s.split('-'); return new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+
+// ── TABS ──
+function setTab(t){
+  ['register','checkin'].forEach(x=>{
+    document.getElementById('tab-'+x).classList.toggle('active',x===t);
+    document.getElementById('panel-'+x).classList.toggle('active',x===t);
+  });
+  if(t==='checkin'){
+    document.getElementById('current-week-label').textContent=getWeekRange();
+    if(!document.getElementById('ci-date').value) document.getElementById('ci-date').value=todayStr();
+    const s=getSession(); if(s.lastGroupUid){ const el=document.getElementById('ci-group-uid'); el.value=s.lastGroupUid; onGroupUidInput(el); }
+  }
+}
+
+// ── REGISTER ──
+async function submitRegistration(){
+  const first=document.getElementById('reg-first').value.trim();
+  const last=document.getElementById('reg-last').value.trim();
+  const email=document.getElementById('reg-email').value.trim();
+  const country=document.getElementById('reg-country').value;
+  const city=document.getElementById('reg-city').value.trim();
+  const state=document.getElementById('reg-state').value||'';
+
+  if(!first||!last||!email||!country||!city){showToast('Please fill in all required fields.','error');return;}
+  if(!email.includes('@')){showToast('Please enter a valid email.','error');return;}
+  if(STATE_DATA[country] && !state){showToast('Please select your '+STATE_DATA[country].label.replace(' *','')+'.' ,'error');return;}
+
+  const btn=document.getElementById('reg-btn');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Registering...';
+  try{
+    const r=await apiPost({
+      type:'registration', first, last, email,
+      phone: document.getElementById('reg-phone').value.trim(),
+      country, state, city,
+      referral: document.getElementById('reg-referral').value.trim().toUpperCase()
+    });
+    if(r.success){
+      const s=getSession(); s.lastGroupUid=r.groupUid; setSession(s);
+      document.getElementById('reg-form-card').style.display='none';
+      document.getElementById('reg-success').style.display='block';
+      document.getElementById('reg-group-uid').textContent=r.groupUid;
+    } else if(r.error==='EMAIL_EXISTS'){
+      showToast('This email is already registered.','error');
+      btn.disabled=false; btn.innerHTML='Register as a BLG Leader →';
+    } else { throw new Error(r.error||'Registration failed'); }
+  }catch(err){ showToast('Connection error. Please try again.','error'); btn.disabled=false; btn.innerHTML='Register as a BLG Leader →'; }
+}
+
+// ── CHECK-IN ──
+let ciTimer=null; let verifiedGroup=null;
+function onGroupUidInput(input){
+  const val=input.value.trim().toUpperCase(); input.value=val;
+  clearTimeout(ciTimer);
+  input.classList.remove('field-ok','field-error');
+  document.getElementById('ci-group-icon').textContent='';
+  document.getElementById('ci-group-verified').classList.remove('show');
+  document.getElementById('ci-group-error').classList.remove('show');
+  document.getElementById('ci-attendance').style.display='none';
+  verifiedGroup=null;
+  if(!val||val.length<8) return;
+  ciTimer=setTimeout(()=>lookupGroup(val),500);
+}
+function verifyGroupNow(){
+  const input=document.getElementById('ci-group-uid');
+  const val=input.value.trim().toUpperCase();
+  if(!val){showToast('Please enter your Group ID.','error');return;}
+  lookupGroup(val);
+}
+async function lookupGroup(val){
+  const icon=document.getElementById('ci-group-icon');
+  icon.innerHTML='<span class="spinner dark" style="width:12px;height:12px"></span>';
+  try{
+    const r=await apiGet({type:'lookupGroup',uid:val});
+    if(r.success&&r.found){
+      verifiedGroup=r;
+      document.getElementById('ci-group-uid').classList.add('field-ok');
+      icon.textContent='✅';
+      document.getElementById('ci-group-name').textContent=r.groupName;
+      document.getElementById('ci-group-meta').textContent=`${r.country}${r.city?', '+r.city:''} · Leader: ${r.leaderFirst} ${r.leaderLast}`;
+      document.getElementById('ci-group-verified').classList.add('show');
+      document.getElementById('ci-group-error').classList.remove('show');
+      document.getElementById('ci-attendance').style.display='block';
+      if(!document.getElementById('ci-date').value) document.getElementById('ci-date').value=todayStr();
+    } else {
+      verifiedGroup=null;
+      document.getElementById('ci-group-uid').classList.add('field-error');
+      icon.textContent='❌';
+      document.getElementById('ci-group-verified').classList.remove('show');
+      document.getElementById('ci-group-error').classList.add('show');
+      document.getElementById('ci-attendance').style.display='none';
+    }
+  }catch(e){ icon.textContent='⚠️'; showToast('Could not reach registry.','error'); }
+}
+function resetCheckin(){
+  document.getElementById('ci-main').style.display='block';
+  document.getElementById('ci-success').style.display='none';
+  document.getElementById('tr-success').style.display='none';
+  document.getElementById('ci-group-uid').value='';
+  document.getElementById('ci-group-uid').classList.remove('field-ok','field-error');
+  document.getElementById('ci-group-icon').textContent='';
+  document.getElementById('ci-group-verified').classList.remove('show');
+  document.getElementById('ci-group-error').classList.remove('show');
+  document.getElementById('ci-attendance').style.display='none';
+  document.getElementById('transfer-form').classList.remove('show');
+  document.getElementById('ci-count').value='';
+  verifiedGroup=null;
+}
+async function submitCheckin(){
+  if(!verifiedGroup){showToast('Please verify your Group ID first.','error');return;}
+  const count=parseInt(document.getElementById('ci-count').value,10);
+  const date=document.getElementById('ci-date').value;
+  if(!count||count<1){showToast('Please enter attendee count.','error');return;}
+  if(!date){showToast('Please select a meeting date.','error');return;}
+  const btn=document.getElementById('ci-btn');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Submitting...';
+  const weekKey=getWeekKey(date);
+  try{
+    const r=await apiPost({type:'checkin',uid:verifiedGroup.groupUid,count,date,week:weekKey});
+    if(r.success){
+      const s=getSession(); s.lastGroupUid=verifiedGroup.groupUid; setSession(s);
+      document.getElementById('ci-conf-uid').textContent=verifiedGroup.groupUid;
+      document.getElementById('ci-conf-count').textContent=count+' people';
+      document.getElementById('ci-conf-date').textContent=fmtDate(date);
+      document.getElementById('ci-conf-week').textContent=weekKey;
+      document.getElementById('ci-main').style.display='none';
+      document.getElementById('ci-success').style.display='block';
+      showToast('Check-in saved! 🙏','success');
+    } else { throw new Error(r.error); }
+  }catch(e){ showToast('Error saving. Please try again.','error'); }
+  btn.disabled=false; btn.innerHTML='Submit Weekly Check-In →';
+}
+
+// ── TRANSFER ──
+function toggleTransfer(){ document.getElementById('transfer-form').classList.toggle('show'); }
+async function submitTransfer(){
+  if(!verifiedGroup){showToast('No group selected.','error');return;}
+  const first=document.getElementById('tr-first').value.trim();
+  const last=document.getElementById('tr-last').value.trim();
+  const email=document.getElementById('tr-email').value.trim();
+  const country=document.getElementById('tr-country').value;
+  const city=document.getElementById('tr-city').value.trim();
+  const state=document.getElementById('tr-state').value||'';
+  if(!first||!last||!email||!country||!city){showToast('Please fill in all new leader fields.','error');return;}
+  if(!email.includes('@')){showToast('Please enter a valid email for the new leader.','error');return;}
+  if(STATE_DATA[country]&&!state){showToast(`Please select the new leader's ${STATE_DATA[country].label.replace(' *','')}.`,'error');return;}
+  const btn=document.getElementById('tr-btn');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Transferring...';
+  try{
+    const referral=document.getElementById('tr-referral').value.trim().toUpperCase()||verifiedGroup.groupUid;
+    const r=await apiPost({
+      type:'transfer',
+      groupUid:verifiedGroup.groupUid,
+      fromLeaderUid:verifiedGroup.leaderUid,
+      newFirst:first, newLast:last, newEmail:email,
+      newPhone:document.getElementById('tr-phone').value.trim(),
+      newCountry:country, newState:state, newCity:city,
+      newReferral:referral
+    });
+    if(r.success){
+      document.getElementById('tr-conf-uid').textContent=verifiedGroup.groupUid;
+      document.getElementById('tr-conf-new-uid').textContent=r.newLeaderUid;
+      document.getElementById('tr-success-msg').textContent=`${verifiedGroup.groupName} has been transferred to ${r.newLeaderName} (${r.newLeaderUid}).`;
+      document.getElementById('ci-main').style.display='none';
+      document.getElementById('tr-success').style.display='block';
+      showToast('Group transferred! ✦','success');
+    } else if(r.error==='EMAIL_EXISTS'){
+      showToast('That email is already registered as a leader.','error');
+    } else { throw new Error(r.error); }
+  }catch(e){ showToast('Transfer error. Please try again.','error'); }
+  btn.disabled=false; btn.innerHTML='Confirm Transfer of Leadership →';
+}
+
+// ── TOAST ──
+function showToast(msg,type=''){
+  const t=document.getElementById('toast'); t.textContent=msg;
+  t.className='toast'+(type?' '+type:''); t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+// ── INIT ──
+document.getElementById('current-week-label').textContent=getWeekRange();
+document.getElementById('ci-date').value=todayStr();
+const _s=getSession(); if(_s.lastGroupUid) document.getElementById('ci-group-uid').value=_s.lastGroupUid;
+</script>
+</body>
+</html>
