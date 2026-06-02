@@ -370,7 +370,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const API = 'https://script.google.com/macros/s/AKfycbwfPc0-Kb77qlCH4-4NX2f0C6vuaFPH1Cb2HQwV6Wh4xm7-6KCdpcym1Bz0g9C8qKm0SA/exec';
+const API = 'https://script.google.com/macros/s/AKfycbxmSUtTk50by7M-Y3-RuTrRlnUjw42UwsFDm2PavJmmsp9cbDoh2_qdVLL7IvpFjisB9A/exec';
 
 // ── STATE / PROVINCE DATA ──────────────────────────────────────
 const STATE_DATA = {
@@ -624,7 +624,7 @@ async function submitTransfer(){
   const state=document.getElementById('tr-state').value||'';
   if(!first||!last||!email||!country||!city){showToast('Please fill in all new leader fields.','error');return;}
   if(!email.includes('@')){showToast('Please enter a valid email for the new leader.','error');return;}
-  if(STATE_DATA[country]&&!state){showToast(`Please select the new leader's ${STATE_DATA[country].label.replace(' *','')}.`,'error');return;}
+  if(STATE_DATA[country]&&!state){showToast("Please select the new leader's "+STATE_DATA[country].label.replace(' *','')+'.' ,'error');return;}
   const btn=document.getElementById('tr-btn');
   btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Transferring...';
   try{
