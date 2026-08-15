@@ -93,6 +93,17 @@
   .state-field-wrap { overflow:hidden; max-height:0; opacity:0; transition:max-height 0.35s ease, opacity 0.3s ease; }
   .state-field-wrap.show { max-height:100px; opacity:1; }
 
+  /* YES/NO TOGGLE (weekly check-in questions) */
+  .yn-toggle { display:flex; gap:8px; }
+  .yn-btn { flex:1; padding:12px 10px; border-radius:9px; border:1.5px solid #E8E0D0; background:var(--warm-white); font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; color:var(--text-mid); cursor:pointer; transition:all 0.2s; }
+  .yn-btn:hover { border-color:var(--gold); }
+  .yn-btn.selected[data-val="YES"] { background:var(--green); border-color:var(--green); color:#fff; }
+  .yn-btn.selected[data-val="NO"] { background:var(--red); border-color:var(--red); color:#fff; }
+  .sub-field-wrap { overflow:hidden; max-height:0; opacity:0; transition:max-height 0.35s ease, opacity 0.3s ease; }
+  .sub-field-wrap.show { max-height:220px; opacity:1; margin-top:10px; }
+  .met-fields-wrap { display:none; }
+  .met-fields-wrap.show { display:block; }
+
   /* SPINNER */
   .spinner { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; vertical-align:middle; margin-right:6px; }
   .spinner.dark { border-color:rgba(0,0,0,0.12); border-top-color:var(--gold); }
@@ -195,7 +206,11 @@
           <div class="form-group"><label>First Name *</label><input type="text" id="reg-first" placeholder="Your first name"></div>
           <div class="form-group"><label>Last Name *</label><input type="text" id="reg-last" placeholder="Your last name"></div>
           <div class="form-group"><label>Email Address *</label><input type="email" id="reg-email" placeholder="your@email.com"></div>
-          <div class="form-group"><label>Phone Number</label><input type="text" id="reg-phone" placeholder="+1 (555) 000-0000"></div>
+          <div class="form-group">
+            <label>WhatsApp Number *</label>
+            <input type="text" id="reg-phone" placeholder="+1 (555) 000-0000">
+            <span class="field-hint">Include your country code. We'll send your weekly check-in confirmations here.</span>
+          </div>
 
           <!-- COUNTRY — triggers state field -->
           <div class="form-group">
@@ -256,7 +271,7 @@
         <div class="week-badge">📅 Current Week: <span id="current-week-label">—</span></div>
 
         <div id="ci-main">
-          <div class="info-box"><strong>Registered groups only.</strong> Enter your Group ID — it will be verified against the BLG registry before your check-in is accepted.</div>
+          <div class="info-box"><strong>Registered groups only.</strong> Enter your Group ID — it will be verified against the BLG registry before your check-in is accepted. Once submitted, we'll send a WhatsApp confirmation to the phone number on file.</div>
 
           <div class="form-group" style="margin-bottom:16px">
             <label>Group ID *</label>
@@ -277,17 +292,84 @@
           </div>
 
           <div id="ci-attendance" style="display:none">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
-              <div class="form-group">
+
+            <div class="form-group full" style="margin-bottom:16px">
+              <label>Did the group meet this week? *</label>
+              <div class="yn-toggle" id="ci-met-toggle">
+                <button type="button" class="yn-btn" data-val="YES" onclick="setMet('YES')">✅ Yes, we met</button>
+                <button type="button" class="yn-btn" data-val="NO" onclick="setMet('NO')">We did not meet</button>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:20px">
+              <label>Date *</label>
+              <input type="date" id="ci-date">
+            </div>
+
+            <div id="ci-met-fields" class="met-fields-wrap">
+              <div class="form-group" style="margin-bottom:20px">
                 <label>Attendees This Week *</label>
                 <input type="number" id="ci-count" placeholder="e.g. 12" min="1" max="9999">
               </div>
-              <div class="form-group">
-                <label>Date of Meeting *</label>
-                <input type="date" id="ci-date">
+
+              <div class="form-group full" style="margin-bottom:16px">
+                <label>Were there any new people this week? *</label>
+                <div class="yn-toggle" id="ci-new-toggle">
+                  <button type="button" class="yn-btn" data-val="YES" onclick="setYesNo('ci-new-toggle','YES',onNewPeopleChange)">Yes</button>
+                  <button type="button" class="yn-btn" data-val="NO" onclick="setYesNo('ci-new-toggle','NO',onNewPeopleChange)">No</button>
+                </div>
+                <div class="sub-field-wrap" id="ci-new-count-wrap">
+                  <div class="form-group">
+                    <label>How many new people?</label>
+                    <input type="number" id="ci-new-count" placeholder="e.g. 2" min="0" max="9999">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group full" style="margin-bottom:16px">
+                <label>Did anyone make a decision for Christ or take an important spiritual step? *</label>
+                <div class="yn-toggle" id="ci-decision-toggle">
+                  <button type="button" class="yn-btn" data-val="YES" onclick="setYesNo('ci-decision-toggle','YES',onDecisionChange)">Yes</button>
+                  <button type="button" class="yn-btn" data-val="NO" onclick="setYesNo('ci-decision-toggle','NO',onDecisionChange)">No</button>
+                </div>
+                <div class="sub-field-wrap" id="ci-decision-notes-wrap">
+                  <div class="form-group">
+                    <label>Tell us briefly (optional)</label>
+                    <input type="text" id="ci-decision-notes" placeholder="e.g. Maria accepted Christ">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group full" style="margin-bottom:16px">
+                <label>Was there a testimony worth sharing? *</label>
+                <div class="yn-toggle" id="ci-testimony-toggle">
+                  <button type="button" class="yn-btn" data-val="YES" onclick="setYesNo('ci-testimony-toggle','YES',onTestimonyChange)">Yes</button>
+                  <button type="button" class="yn-btn" data-val="NO" onclick="setYesNo('ci-testimony-toggle','NO',onTestimonyChange)">No</button>
+                </div>
+                <div class="sub-field-wrap" id="ci-testimony-notes-wrap">
+                  <div class="form-group">
+                    <label>Share the testimony (optional)</label>
+                    <input type="text" id="ci-testimony-notes" placeholder="What happened?">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group full" style="margin-bottom:8px">
+                <label>Did the group multiply or create another BLG? *</label>
+                <div class="yn-toggle" id="ci-multiply-toggle">
+                  <button type="button" class="yn-btn" data-val="YES" onclick="setYesNo('ci-multiply-toggle','YES',onMultiplyChange)">Yes</button>
+                  <button type="button" class="yn-btn" data-val="NO" onclick="setYesNo('ci-multiply-toggle','NO',onMultiplyChange)">No</button>
+                </div>
+                <div class="sub-field-wrap" id="ci-newleader-wrap">
+                  <div class="form-group">
+                    <label>Who is the new leader?</label>
+                    <input type="text" id="ci-new-leader-name" placeholder="New leader's name">
+                  </div>
+                </div>
               </div>
             </div>
-            <button class="submit-btn gold" id="ci-btn" onclick="submitCheckin()">Submit Weekly Check-In →</button>
+
+            <button class="submit-btn gold" id="ci-btn" onclick="submitCheckin()" style="margin-top:12px">Submit Weekly Check-In →</button>
             <p style="font-size:13px;color:var(--text-soft);margin-top:12px;text-align:center">Not your group? <a style="color:var(--gold);cursor:pointer;text-decoration:underline" onclick="resetCheckin()">Use a different Group ID</a></p>
 
             <!-- TRANSFER -->
@@ -300,7 +382,11 @@
                   <div class="form-group"><label>First Name *</label><input type="text" id="tr-first" placeholder="New leader's first name"></div>
                   <div class="form-group"><label>Last Name *</label><input type="text" id="tr-last" placeholder="New leader's last name"></div>
                   <div class="form-group"><label>Email Address *</label><input type="email" id="tr-email" placeholder="their@email.com"></div>
-                  <div class="form-group"><label>Phone Number</label><input type="text" id="tr-phone" placeholder="+1 (555) 000-0000"></div>
+                  <div class="form-group">
+                    <label>WhatsApp Number *</label>
+                    <input type="text" id="tr-phone" placeholder="+1 (555) 000-0000">
+                    <span class="field-hint">Include country code. Used for their weekly check-in confirmations.</span>
+                  </div>
                   <div class="form-group">
                     <label>Country *</label>
                     <select id="tr-country" onchange="onCountryChange('tr')">
@@ -338,11 +424,11 @@
         <div class="checkin-success" id="ci-success">
           <div style="font-size:48px">🙏</div>
           <h3>Check-In Recorded!</h3>
-          <p>Your attendance has been logged in the BLG registry.</p>
+          <p id="ci-success-msg">Your attendance has been logged in the BLG registry.</p>
           <div class="confirm-grid">
             <div class="confirm-cell"><div class="confirm-label">Group ID</div><div class="confirm-value" id="ci-conf-uid">—</div></div>
             <div class="confirm-cell"><div class="confirm-label">Attendees</div><div class="confirm-value" id="ci-conf-count">—</div></div>
-            <div class="confirm-cell"><div class="confirm-label">Meeting Date</div><div class="confirm-value" id="ci-conf-date">—</div></div>
+            <div class="confirm-cell"><div class="confirm-label">Date</div><div class="confirm-value" id="ci-conf-date">—</div></div>
             <div class="confirm-cell"><div class="confirm-label">Week</div><div class="confirm-value" id="ci-conf-week">—</div></div>
           </div>
           <button class="btn-outline" onclick="resetCheckin()">Log Another Group</button>
@@ -475,6 +561,9 @@ function setSession(d){ try{localStorage.setItem('blg_s',JSON.stringify(d));}cat
 async function apiPost(p){ const r=await fetch(API,{method:'POST',body:JSON.stringify(p),headers:{'Content-Type':'text/plain'}}); return r.json(); }
 async function apiGet(p){ const r=await fetch(`${API}?${new URLSearchParams(p)}`); return r.json(); }
 
+// ── VALIDATION HELPERS ──
+function isValidPhone(v){ return String(v||'').replace(/\D/g,'').length>=7; }
+
 // ── WEEK HELPERS ──
 function getWeekKey(ds){ const p=ds.split('-'); const d=new Date(+p[0],+p[1]-1,+p[2]); const day=d.getDay(); const mon=new Date(d); mon.setDate(d.getDate()-((day+6)%7)); const j=new Date(mon.getFullYear(),0,1); return `${mon.getFullYear()}-W${String(Math.ceil(((mon-j)/86400000+j.getDay()+1)/7)).padStart(2,'0')}`; }
 function todayStr(){ const t=new Date(); return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`; }
@@ -499,20 +588,21 @@ async function submitRegistration(){
   const first=document.getElementById('reg-first').value.trim();
   const last=document.getElementById('reg-last').value.trim();
   const email=document.getElementById('reg-email').value.trim();
+  const phone=document.getElementById('reg-phone').value.trim();
   const country=document.getElementById('reg-country').value;
   const city=document.getElementById('reg-city').value.trim();
   const state=document.getElementById('reg-state').value||'';
 
-  if(!first||!last||!email||!country||!city){showToast('Please fill in all required fields.','error');return;}
+  if(!first||!last||!email||!phone||!country||!city){showToast('Please fill in all required fields.','error');return;}
   if(!email.includes('@')){showToast('Please enter a valid email.','error');return;}
+  if(!isValidPhone(phone)){showToast('Please enter a valid WhatsApp number, with country code.','error');return;}
   if(STATE_DATA[country] && !state){showToast('Please select your '+STATE_DATA[country].label.replace(' *','')+'.' ,'error');return;}
 
   const btn=document.getElementById('reg-btn');
   btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Registering...';
   try{
     const r=await apiPost({
-      type:'registration', first, last, email,
-      phone: document.getElementById('reg-phone').value.trim(),
+      type:'registration', first, last, email, phone,
       country, state, city,
       referral: document.getElementById('reg-referral').value.trim().toUpperCase()
     });
@@ -529,7 +619,25 @@ async function submitRegistration(){
 }
 
 // ── CHECK-IN ──
-let ciTimer=null; let verifiedGroup=null;
+let ciTimer=null; let verifiedGroup=null; let ciMet=null;
+
+function setMet(val){
+  ciMet=val;
+  const c=document.getElementById('ci-met-toggle');
+  c.querySelectorAll('.yn-btn').forEach(b=>b.classList.toggle('selected', b.dataset.val===val));
+  document.getElementById('ci-met-fields').classList.toggle('show', val==='YES');
+}
+function setYesNo(containerId, val, onChange){
+  const c=document.getElementById(containerId);
+  c.dataset.value=val;
+  c.querySelectorAll('.yn-btn').forEach(b=>b.classList.toggle('selected', b.dataset.val===val));
+  if(onChange) onChange(val);
+}
+function onNewPeopleChange(val){ document.getElementById('ci-new-count-wrap').classList.toggle('show', val==='YES'); }
+function onDecisionChange(val){ document.getElementById('ci-decision-notes-wrap').classList.toggle('show', val==='YES'); }
+function onTestimonyChange(val){ document.getElementById('ci-testimony-notes-wrap').classList.toggle('show', val==='YES'); }
+function onMultiplyChange(val){ document.getElementById('ci-newleader-wrap').classList.toggle('show', val==='YES'); }
+
 function onGroupUidInput(input){
   const val=input.value.trim().toUpperCase(); input.value=val;
   clearTimeout(ciTimer);
@@ -585,25 +693,79 @@ function resetCheckin(){
   document.getElementById('ci-attendance').style.display='none';
   document.getElementById('transfer-form').classList.remove('show');
   document.getElementById('ci-count').value='';
+
+  ciMet=null;
+  document.getElementById('ci-met-toggle').querySelectorAll('.yn-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('ci-met-fields').classList.remove('show');
+
+  ['ci-new-toggle','ci-decision-toggle','ci-testimony-toggle','ci-multiply-toggle'].forEach(id=>{
+    const c=document.getElementById(id);
+    delete c.dataset.value;
+    c.querySelectorAll('.yn-btn').forEach(b=>b.classList.remove('selected'));
+  });
+  ['ci-new-count-wrap','ci-decision-notes-wrap','ci-testimony-notes-wrap','ci-newleader-wrap'].forEach(id=>{
+    document.getElementById(id).classList.remove('show');
+  });
+  ['ci-new-count','ci-decision-notes','ci-testimony-notes','ci-new-leader-name'].forEach(id=>{
+    document.getElementById(id).value='';
+  });
+
   verifiedGroup=null;
 }
 async function submitCheckin(){
   if(!verifiedGroup){showToast('Please verify your Group ID first.','error');return;}
-  const count=parseInt(document.getElementById('ci-count').value,10);
+  if(!ciMet){showToast('Please tell us whether the group met this week.','error');return;}
   const date=document.getElementById('ci-date').value;
-  if(!count||count<1){showToast('Please enter attendee count.','error');return;}
-  if(!date){showToast('Please select a meeting date.','error');return;}
+  if(!date){showToast('Please select a date.','error');return;}
+
+  let count=0, newPeopleYN='NO', newPeopleCount=0, decisionYN='NO', decisionNotes='',
+      testimonyYN='NO', testimonyNotes='', multiplyYN='NO', newLeaderName='';
+
+  if(ciMet==='YES'){
+    count=parseInt(document.getElementById('ci-count').value,10);
+    if(!count||count<1){showToast('Please enter attendee count.','error');return;}
+
+    const newC=document.getElementById('ci-new-toggle').dataset.value;
+    if(!newC){showToast('Please answer: were there any new people?','error');return;}
+    newPeopleYN=newC;
+    if(newC==='YES'){ newPeopleCount=parseInt(document.getElementById('ci-new-count').value,10)||0; }
+
+    const decC=document.getElementById('ci-decision-toggle').dataset.value;
+    if(!decC){showToast('Please answer the decision-for-Christ question.','error');return;}
+    decisionYN=decC;
+    decisionNotes=document.getElementById('ci-decision-notes').value.trim();
+
+    const testC=document.getElementById('ci-testimony-toggle').dataset.value;
+    if(!testC){showToast('Please answer the testimony question.','error');return;}
+    testimonyYN=testC;
+    testimonyNotes=document.getElementById('ci-testimony-notes').value.trim();
+
+    const mulC=document.getElementById('ci-multiply-toggle').dataset.value;
+    if(!mulC){showToast('Please answer the multiplication question.','error');return;}
+    multiplyYN=mulC;
+    if(mulC==='YES'){ newLeaderName=document.getElementById('ci-new-leader-name').value.trim(); }
+  }
+
   const btn=document.getElementById('ci-btn');
   btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Submitting...';
   const weekKey=getWeekKey(date);
   try{
-    const r=await apiPost({type:'checkin',uid:verifiedGroup.groupUid,count,date,week:weekKey});
+    const r=await apiPost({
+      type:'checkin', uid:verifiedGroup.groupUid, met:ciMet, count, date, week:weekKey,
+      newPeople:newPeopleYN, newPeopleCount,
+      decision:decisionYN, decisionNotes,
+      testimony:testimonyYN, testimonyNotes,
+      multiplied:multiplyYN, newLeaderName
+    });
     if(r.success){
       const s=getSession(); s.lastGroupUid=verifiedGroup.groupUid; setSession(s);
       document.getElementById('ci-conf-uid').textContent=verifiedGroup.groupUid;
-      document.getElementById('ci-conf-count').textContent=count+' people';
+      document.getElementById('ci-conf-count').textContent = ciMet==='YES' ? (count+' people') : 'No meeting';
       document.getElementById('ci-conf-date').textContent=fmtDate(date);
       document.getElementById('ci-conf-week').textContent=weekKey;
+      document.getElementById('ci-success-msg').textContent = r.whatsappSent
+        ? 'Your check-in has been logged and a WhatsApp confirmation was sent to your phone.'
+        : 'Your check-in has been logged in the BLG registry.';
       document.getElementById('ci-main').style.display='none';
       document.getElementById('ci-success').style.display='block';
       showToast('Check-in saved! 🙏','success');
@@ -619,11 +781,13 @@ async function submitTransfer(){
   const first=document.getElementById('tr-first').value.trim();
   const last=document.getElementById('tr-last').value.trim();
   const email=document.getElementById('tr-email').value.trim();
+  const phone=document.getElementById('tr-phone').value.trim();
   const country=document.getElementById('tr-country').value;
   const city=document.getElementById('tr-city').value.trim();
   const state=document.getElementById('tr-state').value||'';
-  if(!first||!last||!email||!country||!city){showToast('Please fill in all new leader fields.','error');return;}
+  if(!first||!last||!email||!phone||!country||!city){showToast('Please fill in all new leader fields.','error');return;}
   if(!email.includes('@')){showToast('Please enter a valid email for the new leader.','error');return;}
+  if(!isValidPhone(phone)){showToast("Please enter a valid WhatsApp number for the new leader, with country code.",'error');return;}
   if(STATE_DATA[country]&&!state){showToast("Please select the new leader's "+STATE_DATA[country].label.replace(' *','')+'.' ,'error');return;}
   const btn=document.getElementById('tr-btn');
   btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Transferring...';
@@ -634,7 +798,7 @@ async function submitTransfer(){
       groupUid:verifiedGroup.groupUid,
       fromLeaderUid:verifiedGroup.leaderUid,
       newFirst:first, newLast:last, newEmail:email,
-      newPhone:document.getElementById('tr-phone').value.trim(),
+      newPhone:phone,
       newCountry:country, newState:state, newCity:city,
       newReferral:referral
     });
