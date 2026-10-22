@@ -19,7 +19,7 @@
     --cream-dk:   #F0EBE1;
     --white:      #FFFDF8;
     --text:       #1A1A1A;
-    --text-muted: #5A6070;
+    --muted:      #5A6070;
     --border:     #D8D0C4;
     --success:    #2A7A4B;
     --error:      #C0392B;
@@ -27,463 +27,179 @@
     --shadow:     0 2px 12px rgba(15,31,61,0.10);
     --shadow-lg:  0 8px 32px rgba(15,31,61,0.16);
   }
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--cream);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* ── Header ── */
-  .site-header {
-    background: var(--navy);
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 64px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.3);
-  }
+  /* Header */
+  .site-header { background: var(--navy); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 64px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(0,0,0,0.3); }
   .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-  .logo-mark {
-    width: 38px; height: 38px;
-    background: linear-gradient(135deg, var(--gold), var(--gold-light));
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Playfair Display', serif;
-    font-size: 16px; font-weight: 700; color: var(--navy);
-  }
+  .logo-mark { width: 38px; height: 38px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--navy); }
   .logo-text { color: #fff; font-size: 14px; font-weight: 500; letter-spacing: 0.03em; }
   .logo-text span { color: var(--gold-light); font-weight: 600; }
-  .portal-badge {
-    background: rgba(201,146,42,0.20);
-    border: 1px solid rgba(201,146,42,0.40);
-    color: var(--gold-light);
-    font-size: 12px;
-    padding: 4px 12px;
-    border-radius: 20px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    font-weight: 600;
-  }
+  .portal-badge { background: rgba(201,146,42,0.20); border: 1px solid rgba(201,146,42,0.40); color: var(--gold-light); font-size: 12px; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
 
-  /* ── Main layout ── */
-  main { flex: 1; padding: 40px 24px; max-width: 900px; margin: 0 auto; width: 100%; }
+  main { flex: 1; padding: 40px 24px; max-width: 920px; margin: 0 auto; width: 100%; }
 
-  /* ── Entry screen ── */
-  #entry-screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: calc(100vh - 64px);
-    padding: 40px 0;
-  }
-  .entry-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 48px 44px;
-    width: 100%;
-    max-width: 460px;
-    box-shadow: var(--shadow-lg);
-    text-align: center;
-  }
-  .entry-icon {
-    width: 72px; height: 72px;
-    background: linear-gradient(135deg, var(--navy), var(--navy-mid));
-    border-radius: 50%;
-    margin: 0 auto 24px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 28px;
-  }
-  .entry-card h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 26px;
-    color: var(--navy);
-    margin-bottom: 8px;
-  }
-  .entry-card p {
-    color: var(--text-muted);
-    font-size: 14px;
-    line-height: 1.6;
-    margin-bottom: 32px;
-  }
+  /* Entry screen */
+  #entry-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 64px); }
+  .entry-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 48px 44px; width: 100%; max-width: 460px; box-shadow: var(--shadow-lg); text-align: center; }
+  .entry-icon { width: 72px; height: 72px; background: linear-gradient(135deg, var(--navy), var(--navy-mid)); border-radius: 50%; margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+  .entry-card h1 { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--navy); margin-bottom: 8px; }
+  .entry-card p { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 32px; }
 
-  /* ── BLG ID input ── */
+  /* BLG input */
   .blg-field { width: 100%; margin-bottom: 20px; }
-  .blg-field label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--navy);
-    margin-bottom: 8px;
-    text-align: left;
-  }
-  .blg-input-wrap {
-    display: flex;
-    align-items: center;
-    border: 2px solid var(--border);
-    border-radius: var(--r);
-    background: var(--white);
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
+  .blg-field label { display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--navy); margin-bottom: 8px; text-align: left; }
+  .blg-input-wrap { display: flex; align-items: center; border: 2px solid var(--border); border-radius: var(--r); background: var(--white); overflow: hidden; transition: border-color 0.2s; }
   .blg-input-wrap:focus-within { border-color: var(--gold); }
   .blg-input-wrap.valid   { border-color: var(--success); }
   .blg-input-wrap.invalid { border-color: var(--error); }
-  .blg-prefix {
-    background: var(--cream-dk);
-    padding: 0 14px;
-    height: 48px;
-    display: flex; align-items: center;
-    font-weight: 700;
-    font-size: 15px;
-    color: var(--navy);
-    border-right: 1px solid var(--border);
-    user-select: none;
-    flex-shrink: 0;
-  }
-  .id-wrap { flex: 1; display: flex; align-items: center; position: relative; }
-  .blg-suffix-input {
-    flex: 1;
-    border: none;
-    outline: none;
-    background: transparent;
-    font-size: 16px;
-    font-weight: 600;
-    padding: 0 12px;
-    height: 48px;
-    color: var(--navy);
-    letter-spacing: 0.12em;
-    font-family: 'DM Sans', sans-serif;
-  }
+  .blg-prefix { background: var(--cream-dk); padding: 0 14px; height: 48px; display: flex; align-items: center; font-weight: 700; font-size: 15px; color: var(--navy); border-right: 1px solid var(--border); user-select: none; flex-shrink: 0; }
+  .id-wrap { flex: 1; display: flex; align-items: center; }
+  .blg-suffix-input { flex: 1; border: none; outline: none; background: transparent; font-size: 16px; font-weight: 600; padding: 0 12px; height: 48px; color: var(--navy); letter-spacing: 0.12em; font-family: 'DM Sans', sans-serif; }
   .blg-suffix-input::placeholder { color: #aaa; font-weight: 400; letter-spacing: 0; }
-  .id-status { width: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .id-status { width: 36px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .spinner { width: 18px; height: 18px; border: 2px solid var(--cream-dk); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.6s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .lookup-result {
-    background: var(--gold-pale);
-    border: 1px solid rgba(201,146,42,0.30);
-    border-radius: var(--r);
-    padding: 14px 16px;
-    text-align: left;
-    margin-top: 12px;
-    display: none;
-  }
+  .lookup-result { background: var(--gold-pale); border: 1px solid rgba(201,146,42,0.30); border-radius: var(--r); padding: 14px 16px; text-align: left; margin-top: 10px; display: none; }
   .lookup-result.show { display: block; }
-  .lookup-result .name { font-weight: 600; font-size: 15px; color: var(--navy); }
-  .lookup-result .meta { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+  .lookup-result .lname { font-weight: 600; font-size: 15px; color: var(--navy); }
+  .lookup-result .lmeta { font-size: 12px; color: var(--muted); margin-top: 3px; }
 
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 0 28px; height: 48px;
-    border-radius: var(--r);
-    font-size: 14px; font-weight: 600;
-    letter-spacing: 0.03em;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s;
-    text-decoration: none;
-  }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--gold), #D4A040);
-    color: var(--navy);
-    width: 100%;
-  }
-  .btn-primary:hover { background: linear-gradient(135deg, #D4A040, var(--gold)); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(201,146,42,0.35); }
-  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-  .btn-outline {
-    background: transparent;
-    border: 2px solid var(--gold);
-    color: var(--gold);
-    font-size: 13px;
-    padding: 0 16px;
-    height: 36px;
-  }
-  .btn-outline:hover { background: var(--gold); color: var(--navy); }
-  .btn-sm { height: 34px; padding: 0 16px; font-size: 13px; }
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 24px; height: 46px; border-radius: var(--r); font-size: 14px; font-weight: 600; letter-spacing: 0.02em; cursor: pointer; border: none; transition: all 0.18s; text-decoration: none; font-family: 'DM Sans', sans-serif; }
+  .btn-primary { background: linear-gradient(135deg, var(--gold), #D4A040); color: var(--navy); width: 100%; }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(201,146,42,0.35); }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
   .btn-navy { background: var(--navy); color: #fff; }
   .btn-navy:hover { background: var(--navy-mid); }
-  .btn-ghost { background: transparent; color: var(--text-muted); font-size: 13px; padding: 0 12px; height: 34px; }
+  .btn-outline { background: transparent; border: 2px solid var(--gold); color: var(--gold); }
+  .btn-outline:hover { background: var(--gold); color: var(--navy); }
+  .btn-ghost { background: transparent; color: var(--muted); }
   .btn-ghost:hover { color: var(--navy); background: var(--cream-dk); }
   .btn-success { background: var(--success); color: #fff; }
-  .btn-success:hover { background: #236040; }
+  .btn-success:hover { background: #1e6038; }
+  .btn-danger { background: var(--error); color: #fff; }
+  .btn-danger:hover { background: #a93226; }
+  .btn-sm { height: 34px; padding: 0 14px; font-size: 13px; }
+  .btn-xs { height: 28px; padding: 0 10px; font-size: 12px; }
 
-  /* ── Dashboard screens ── */
+  /* Dashboard */
   #dashboard-screen { display: none; }
-
-  .dash-header {
-    background: var(--navy);
-    border-radius: 12px;
-    padding: 24px 28px;
-    margin-bottom: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
+  .dash-header { background: var(--navy); border-radius: 12px; padding: 22px 28px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
   .dash-leader-info { color: #fff; }
-  .dash-leader-info .role-badge {
-    display: inline-block;
-    background: rgba(201,146,42,0.25);
-    border: 1px solid rgba(201,146,42,0.45);
-    color: var(--gold-light);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    padding: 3px 10px;
-    border-radius: 20px;
-    margin-bottom: 8px;
-  }
-  .dash-leader-info h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    margin-bottom: 2px;
-  }
-  .dash-leader-info .uid-text { color: rgba(255,255,255,0.55); font-size: 13px; }
-  .dash-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .role-badge { display: inline-block; background: rgba(201,146,42,0.22); border: 1px solid rgba(201,146,42,0.45); color: var(--gold-light); font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; margin-bottom: 6px; }
+  .dash-leader-info h2 { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 2px; }
+  .dash-leader-info .uid-text { color: rgba(255,255,255,0.50); font-size: 13px; }
+  .dash-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
-  /* ── Stats row ── */
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 16px;
-    margin-bottom: 28px;
-  }
-  .stat-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 20px 16px;
-    text-align: center;
-  }
-  .stat-card .stat-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 32px;
-    color: var(--navy);
-    font-weight: 700;
-    line-height: 1;
-  }
-  .stat-card .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+  /* Stats */
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px; margin-bottom: 24px; }
+  .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); padding: 18px 14px; text-align: center; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 30px; color: var(--navy); font-weight: 700; line-height: 1; }
+  .stat-label { font-size: 11px; color: var(--muted); margin-top: 5px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
 
-  /* ── Section heading ── */
-  .section-heading {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 16px;
-  }
-  .section-heading h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    color: var(--navy);
-  }
+  /* Role setup */
+  .setup-card { background: var(--gold-pale); border: 2px dashed var(--gold); border-radius: 12px; padding: 28px 24px; margin-bottom: 24px; text-align: center; }
+  .setup-card h3 { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--navy); margin-bottom: 8px; }
+  .setup-card p { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+  .role-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .role-btn { padding: 14px 28px; border: 2px solid var(--navy); border-radius: var(--r); background: var(--white); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--navy); transition: all 0.18s; text-align: center; }
+  .role-btn:hover, .role-btn.selected { background: var(--navy); color: var(--gold-light); }
+  .role-btn .role-icon { font-size: 24px; display: block; margin-bottom: 6px; }
+  .role-btn .role-name { display: block; font-size: 13px; font-weight: 700; }
+  .role-btn .role-desc { display: block; font-size: 11px; color: inherit; opacity: 0.7; margin-top: 2px; }
 
-  /* ── Partner Pastor cards ── */
-  .pp-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+  /* Section */
+  .section-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .section-heading h3 { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--navy); }
 
-  .pp-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    overflow: hidden;
-    box-shadow: var(--shadow);
-  }
-  .pp-card-header {
-    padding: 16px 20px;
-    display: flex; align-items: center; gap: 16px;
-    cursor: pointer;
-    user-select: none;
-    transition: background 0.15s;
-  }
+  /* Info banner */
+  .info-banner { background: var(--cream-dk); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--muted); }
+  .info-banner strong { color: var(--navy); }
+
+  /* Hub Pastor assign section */
+  .hp-assign-section { background: var(--gold-pale); border: 1px solid rgba(201,146,42,0.25); border-radius: var(--r); padding: 18px; margin-bottom: 24px; }
+  .hp-assign-section h4 { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+  .hp-assign-section p { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+  .current-hp-tag { display: inline-flex; align-items: center; gap: 6px; background: var(--navy); color: var(--gold-light); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 10px; }
+
+  /* PP list (Hub Pastor view) */
+  .pp-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+  .pp-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow); }
+  .pp-card-header { padding: 14px 18px; display: flex; align-items: center; gap: 14px; cursor: pointer; user-select: none; transition: background 0.15s; }
   .pp-card-header:hover { background: var(--cream); }
-  .pp-avatar {
-    width: 42px; height: 42px;
-    background: linear-gradient(135deg, var(--navy-light), var(--navy));
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--gold-light);
-    font-weight: 700;
-    font-size: 16px;
-    flex-shrink: 0;
-  }
+  .pp-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, var(--navy-light), var(--navy)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gold-light); font-weight: 700; font-size: 15px; flex-shrink: 0; }
   .pp-info { flex: 1; }
-  .pp-info .pp-name { font-weight: 600; font-size: 15px; color: var(--navy); }
-  .pp-info .pp-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-  .pp-right { display: flex; align-items: center; gap: 12px; }
-  .group-count-badge {
-    background: var(--cream-dk);
-    border: 1px solid var(--border);
-    color: var(--navy);
-    font-size: 11px; font-weight: 700;
-    padding: 3px 10px; border-radius: 20px;
-  }
-  .chevron { color: var(--text-muted); transition: transform 0.2s; font-size: 14px; }
+  .pp-info .pp-name { font-weight: 600; font-size: 14px; color: var(--navy); }
+  .pp-info .pp-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .pp-right { display: flex; align-items: center; gap: 10px; }
+  .count-badge { background: var(--cream-dk); border: 1px solid var(--border); color: var(--navy); font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 20px; }
+  .chevron { color: var(--muted); transition: transform 0.2s; font-size: 13px; }
   .pp-card.expanded .chevron { transform: rotate(180deg); }
-
-  .pp-groups {
-    display: none;
-    border-top: 1px solid var(--border);
-    background: var(--cream);
-    padding: 16px 20px;
-  }
+  .pp-groups { display: none; border-top: 1px solid var(--border); background: var(--cream); padding: 14px 18px; }
   .pp-card.expanded .pp-groups { display: block; }
 
-  /* ── Group rows ── */
-  .group-list { display: flex; flex-direction: column; gap: 10px; }
-  .group-row {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 14px 16px;
-    display: flex; align-items: center; gap: 14px;
-  }
-  .group-dot { width: 10px; height: 10px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
+  /* Group rows */
+  .group-list { display: flex; flex-direction: column; gap: 8px; }
+  .group-row { background: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; }
+  .group-dot { width: 9px; height: 9px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
   .group-info { flex: 1; }
   .group-info .g-name { font-weight: 600; font-size: 14px; color: var(--navy); }
-  .group-info .g-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-  .group-actions { display: flex; gap: 8px; }
+  .group-info .g-meta { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .group-actions { display: flex; gap: 6px; }
 
-  /* ── Check-in modal ── */
-  .modal-overlay {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(10,20,45,0.70);
-    z-index: 500;
-    align-items: center; justify-content: center;
-    padding: 24px;
-  }
+  /* Modals */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(10,20,45,0.72); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
   .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--white);
-    border-radius: 12px;
-    padding: 32px 28px;
-    width: 100%; max-width: 440px;
-    box-shadow: var(--shadow-lg);
-    position: relative;
-  }
-  .modal-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    color: var(--navy);
-    margin-bottom: 6px;
-  }
-  .modal-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
-  .modal-close {
-    position: absolute; top: 16px; right: 16px;
-    background: none; border: none; cursor: pointer;
-    color: var(--text-muted); font-size: 20px; line-height: 1;
-    padding: 4px;
-  }
+  .modal { background: var(--white); border-radius: 12px; padding: 28px 24px; width: 100%; max-width: 440px; box-shadow: var(--shadow-lg); position: relative; }
+  .modal-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--navy); margin-bottom: 4px; }
+  .modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 22px; }
+  .modal-close { position: absolute; top: 14px; right: 14px; background: none; border: none; cursor: pointer; color: var(--muted); font-size: 20px; line-height: 1; padding: 4px; }
   .modal-close:hover { color: var(--navy); }
-
-  .form-row { margin-bottom: 18px; }
-  .form-row label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--navy); margin-bottom: 7px; }
-  .form-input {
-    width: 100%; padding: 0 14px; height: 44px;
-    border: 2px solid var(--border); border-radius: var(--r);
-    font-size: 14px; font-family: 'DM Sans', sans-serif;
-    color: var(--text); background: var(--white);
-    outline: none; transition: border-color 0.2s;
-  }
+  .form-row { margin-bottom: 16px; }
+  .form-row label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--navy); margin-bottom: 6px; }
+  .form-input { width: 100%; padding: 0 13px; height: 44px; border: 2px solid var(--border); border-radius: var(--r); font-size: 14px; font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--white); outline: none; transition: border-color 0.2s; }
   .form-input:focus { border-color: var(--gold); }
-  .form-select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M0 0l6 7 6-7z' fill='%235A6070'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
-
-  .modal-actions { display: flex; gap: 10px; margin-top: 24px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
   .modal-actions .btn { flex: 1; }
 
-  /* ── Assign Hub Pastor modal ── */
-  #assign-hp-modal .assign-result {
-    background: var(--gold-pale);
-    border: 1px solid rgba(201,146,42,0.30);
-    border-radius: 6px;
-    padding: 12px 14px;
-    margin-top: 10px;
-    display: none;
-  }
-  #assign-hp-modal .assign-result.show { display: block; }
-  #assign-hp-modal .assign-result .name { font-weight: 600; color: var(--navy); font-size: 14px; }
-  #assign-hp-modal .assign-result .meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-
-  /* ── Report modal ── */
-  #report-modal .report-table-wrap { max-height: 280px; overflow-y: auto; margin-top: 8px; }
+  /* Report */
+  .report-table-wrap { max-height: 300px; overflow-y: auto; margin-top: 8px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
   .report-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .report-table th {
-    background: var(--navy); color: #fff;
-    text-align: left; padding: 8px 12px;
-    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
-    position: sticky; top: 0;
-  }
-  .report-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--text); }
+  .report-table th { background: var(--navy); color: #fff; text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; position: sticky; top: 0; }
+  .report-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); }
   .report-table tr:last-child td { border-bottom: none; }
   .report-table tr:hover td { background: var(--cream); }
 
-  /* ── Toast ── */
-  #toast {
-    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
-    background: var(--navy); color: #fff;
-    padding: 12px 24px; border-radius: 8px;
-    font-size: 14px; font-weight: 500;
-    box-shadow: var(--shadow-lg);
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.25s;
-    z-index: 1000; white-space: nowrap;
-  }
+  /* Toast */
+  #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); background: var(--navy); color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500; box-shadow: var(--shadow-lg); opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 1000; white-space: nowrap; max-width: calc(100vw - 48px); text-align: center; }
   #toast.show { opacity: 1; }
   #toast.success { background: var(--success); }
   #toast.error   { background: var(--error); }
 
-  /* ── Empty state ── */
-  .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
-  .empty-state svg { opacity: 0.3; margin-bottom: 12px; }
+  .empty-state { text-align: center; padding: 36px 20px; color: var(--muted); }
   .empty-state p { font-size: 14px; }
+  .loading-wrap { text-align: center; padding: 48px 20px; }
+  .big-spinner { width: 36px; height: 36px; border: 3px solid var(--cream-dk); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 14px; }
+  .loading-wrap p { color: var(--muted); font-size: 14px; }
 
-  /* ── Loading ── */
-  .loading-wrap { text-align: center; padding: 60px 20px; }
-  .big-spinner { width: 40px; height: 40px; border: 3px solid var(--cream-dk); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
-  .loading-wrap p { color: var(--text-muted); font-size: 14px; }
+  .assign-result { background: var(--gold-pale); border: 1px solid rgba(201,146,42,0.30); border-radius: 6px; padding: 12px 14px; margin-top: 10px; display: none; }
+  .assign-result.show { display: block; }
+  .assign-result .ar-name { font-weight: 600; color: var(--navy); font-size: 14px; }
+  .assign-result .ar-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
-  /* ── Assign HP section for PP dashboard ── */
-  .assign-hp-section {
-    background: var(--gold-pale);
-    border: 1px solid rgba(201,146,42,0.25);
-    border-radius: var(--r);
-    padding: 20px;
-    margin-bottom: 28px;
-  }
-  .assign-hp-section h4 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
-  .assign-hp-section p { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; }
-  .current-hp-tag {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: var(--navy); color: var(--gold-light);
-    padding: 6px 14px; border-radius: 20px;
-    font-size: 13px; font-weight: 600;
-    margin-bottom: 12px;
-  }
-
-  /* ── Responsive ── */
   @media (max-width: 600px) {
-    .entry-card { padding: 32px 20px; }
-    .dash-header { padding: 20px 16px; }
-    main { padding: 24px 16px; }
+    .entry-card { padding: 28px 18px; }
+    .dash-header { padding: 18px 14px; }
+    main { padding: 20px 14px; }
+    .role-btns { flex-direction: column; align-items: center; }
   }
 </style>
 </head>
 <body>
 
-<!-- Header -->
 <header class="site-header">
   <a href="index.html" class="logo">
     <div class="logo-mark">B</div>
@@ -492,394 +208,694 @@
   <span class="portal-badge">Hub Portal</span>
 </header>
 
-<!-- ENTRY SCREEN -->
 <main>
+
+<!-- ═══════════════════════════════ ENTRY SCREEN ═══════════════════════════════ -->
 <div id="entry-screen">
   <div class="entry-card">
     <div class="entry-icon">🌍</div>
     <h1>Leader Portal</h1>
-    <p>Enter your BLG Leader ID to access your dashboard, manage your network, and submit weekly attendance.</p>
-
+    <p>Enter your BLG Leader ID to manage your network, submit check-ins, and run reports.</p>
     <div class="blg-field">
       <label for="entry-suffix">Your BLG Leader ID</label>
       <div class="blg-input-wrap" id="entry-wrap">
         <span class="blg-prefix">BLG-</span>
         <div class="id-wrap">
           <input type="text" class="blg-suffix-input" id="entry-suffix"
-            placeholder="00001" maxlength="5"
-            inputmode="numeric" pattern="[0-9]*"
-            oninput="onEntryInput(this)"
-            autocomplete="off">
+            placeholder="00001" maxlength="5" inputmode="numeric" pattern="[0-9]*"
+            oninput="onEntryInput(this)" autocomplete="off">
           <span class="id-status" id="entry-icon"></span>
         </div>
       </div>
       <div class="lookup-result" id="entry-result">
-        <div class="name" id="entry-name"></div>
-        <div class="meta" id="entry-meta"></div>
+        <div class="lname" id="entry-name"></div>
+        <div class="lmeta" id="entry-meta"></div>
       </div>
     </div>
-
-    <button class="btn btn-primary" id="enter-btn" onclick="enterPortal()" disabled>
-      Enter Portal →
-    </button>
+    <button class="btn btn-primary" id="enter-btn" onclick="enterPortal()" disabled>Enter Portal →</button>
   </div>
 </div>
 
-<!-- DASHBOARD SCREEN -->
+<!-- ═══════════════════════════════ DASHBOARD SCREEN ═══════════════════════════════ -->
 <div id="dashboard-screen">
-  <!-- Header bar -->
+
+  <!-- Top bar -->
   <div class="dash-header">
     <div class="dash-leader-info">
-      <div class="role-badge" id="dash-role-badge">Hub Pastor</div>
-      <h2 id="dash-leader-name">Loading...</h2>
-      <div class="uid-text" id="dash-leader-uid"></div>
+      <div class="role-badge" id="dash-role-badge">Loading...</div>
+      <h2 id="dash-name">Leader</h2>
+      <div class="uid-text" id="dash-uid"></div>
     </div>
     <div class="dash-actions">
-      <button class="btn btn-outline btn-sm" onclick="openReportModal()">📊 Run Report</button>
+      <button class="btn btn-outline btn-sm" onclick="openReportModal()">📊 Report</button>
+      <button class="btn btn-ghost btn-sm" onclick="openRoleModal()">⚙ Settings</button>
       <button class="btn btn-ghost btn-sm" onclick="signOut()">← Exit</button>
     </div>
   </div>
 
   <!-- Stats -->
-  <div class="stats-row" id="stats-row">
-    <div class="stat-card">
-      <div class="stat-num" id="stat-pp">—</div>
-      <div class="stat-label">Partner Pastors</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num" id="stat-groups">—</div>
-      <div class="stat-label">BLG Groups</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num" id="stat-checkins">—</div>
-      <div class="stat-label">Check-ins This Week</div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num" id="stat-pps">—</div><div class="stat-label">Partner Pastors</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-groups">—</div><div class="stat-label">My Groups</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-total-groups">—</div><div class="stat-label">Total Network Groups</div></div>
+  </div>
+
+  <!-- Role setup prompt -->
+  <div class="setup-card" id="setup-prompt" style="display:none">
+    <h3>Set Up Your Role</h3>
+    <p>Choose your leadership role so the portal shows the right view.</p>
+    <div class="role-btns">
+      <div class="role-btn" onclick="setRole('Hub Pastor')">
+        <span class="role-icon">🏛</span>
+        <span class="role-name">Hub Pastor</span>
+        <span class="role-desc">I oversee Partner Pastors</span>
+      </div>
+      <div class="role-btn" onclick="setRole('Partner Pastor')">
+        <span class="role-icon">🤝</span>
+        <span class="role-name">Partner Pastor</span>
+        <span class="role-desc">I lead BLG Groups directly</span>
+      </div>
     </div>
   </div>
 
-  <!-- Assign Hub Pastor section (Partner Pastor only) -->
-  <div class="assign-hp-section" id="assign-hp-section" style="display:none">
+  <!-- Hub Pastor assign (PP view) -->
+  <div class="hp-assign-section" id="hp-assign-section" style="display:none">
     <h4>Your Hub Pastor</h4>
-    <p>Assign yourself to a Hub Pastor to join their network. You can change this at any time.</p>
+    <p>Assign yourself to a Hub Pastor to join their network.</p>
     <div id="current-hp-display"></div>
-    <button class="btn btn-outline btn-sm" onclick="openAssignHPModal()">
-      ✏️ Assign / Change Hub Pastor
-    </button>
+    <button class="btn btn-outline btn-sm" onclick="openAssignHPModal()">✏ Change Hub Pastor</button>
   </div>
 
-  <!-- Partner Pastors list (Hub Pastor view) -->
+  <!-- ─── HUB PASTOR VIEW ─── -->
   <div id="hp-view" style="display:none">
     <div class="section-heading">
-      <h3>Partner Pastors</h3>
+      <h3>My Partner Pastors</h3>
+      <button class="btn btn-navy btn-sm" onclick="openAddPPModal()">+ Add Partner Pastor</button>
     </div>
-    <div class="pp-list" id="pp-list">
-      <div class="loading-wrap"><div class="big-spinner"></div><p>Loading network...</p></div>
+    <div class="info-banner" id="hp-cloud-note" style="display:none">
+      ℹ <span><strong>Cloud sync pending.</strong> Partner Pastor assignments are stored locally until the Apps Script is updated. See setup guide for instructions.</span>
+    </div>
+    <div id="pp-list" class="pp-list">
+      <div class="empty-state"><p>No Partner Pastors yet. Click + Add Partner Pastor to add one.</p></div>
     </div>
   </div>
 
-  <!-- My Groups list (Partner Pastor view) -->
+  <!-- ─── PARTNER PASTOR VIEW ─── -->
   <div id="pp-view" style="display:none">
     <div class="section-heading">
       <h3>My BLG Groups</h3>
+      <button class="btn btn-navy btn-sm" onclick="openAddGroupModal()">+ Add Group</button>
     </div>
-    <div class="group-list" id="my-groups-list">
-      <div class="loading-wrap"><div class="big-spinner"></div><p>Loading groups...</p></div>
+    <div class="info-banner" id="pp-cloud-note" style="display:none">
+      ℹ <span><strong>Cloud sync pending.</strong> Group assignments are stored locally until the Apps Script is updated.</span>
+    </div>
+    <div id="my-groups-list" class="group-list">
+      <div class="empty-state"><p>No groups yet. Click + Add Group to add a BLG group to your dashboard.</p></div>
     </div>
   </div>
-</div>
+
+</div><!-- /dashboard-screen -->
+
 </main>
 
-<!-- CHECK-IN MODAL -->
+<!-- ════════════════════════════════ MODALS ════════════════════════════════ -->
+
+<!-- Check-in -->
 <div class="modal-overlay" id="checkin-modal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('checkin-modal')">✕</button>
     <div class="modal-title">Weekly Check-In</div>
-    <div class="modal-sub" id="checkin-group-name">Group Name</div>
+    <div class="modal-sub" id="checkin-group-label">Group</div>
     <input type="hidden" id="checkin-group-uid">
-    <div class="form-row">
-      <label>Date of Meeting</label>
-      <input type="date" class="form-input" id="checkin-date">
-    </div>
-    <div class="form-row">
-      <label>Number of Attendees</label>
-      <input type="number" class="form-input" id="checkin-count" min="1" placeholder="e.g. 8">
-    </div>
-    <div class="form-row">
-      <label>Notes (Optional)</label>
-      <input type="text" class="form-input" id="checkin-notes" placeholder="Any updates or prayer requests">
-    </div>
+    <div class="form-row"><label>Date of Meeting</label><input type="date" class="form-input" id="checkin-date"></div>
+    <div class="form-row"><label>Number of Attendees</label><input type="number" class="form-input" id="checkin-count" min="1" placeholder="e.g. 8"></div>
+    <div class="form-row"><label>Notes (Optional)</label><input type="text" class="form-input" id="checkin-notes" placeholder="Updates, prayer requests…"></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal('checkin-modal')">Cancel</button>
-      <button class="btn btn-success" onclick="submitCheckin()">Submit ✓</button>
+      <button class="btn btn-success" id="checkin-submit-btn" onclick="submitCheckin()">Submit ✓</button>
     </div>
   </div>
 </div>
 
-<!-- ASSIGN HUB PASTOR MODAL -->
+<!-- Assign Hub Pastor -->
 <div class="modal-overlay" id="assign-hp-modal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('assign-hp-modal')">✕</button>
     <div class="modal-title">Assign Hub Pastor</div>
-    <div class="modal-sub">Enter your Hub Pastor's BLG ID to link yourself to their network.</div>
+    <div class="modal-sub">Enter your Hub Pastor's BLG Leader ID.</div>
     <div class="blg-field">
-      <label for="hp-assign-suffix">Hub Pastor BLG ID</label>
-      <div class="blg-input-wrap" id="hp-assign-wrap">
+      <label for="ahp-suffix">Hub Pastor BLG ID</label>
+      <div class="blg-input-wrap" id="ahp-wrap">
         <span class="blg-prefix">BLG-</span>
         <div class="id-wrap">
-          <input type="text" class="blg-suffix-input" id="hp-assign-suffix"
-            placeholder="00001" maxlength="5"
-            inputmode="numeric" pattern="[0-9]*"
-            oninput="onHPAssignInput(this)"
-            autocomplete="off">
-          <span class="id-status" id="hp-assign-icon"></span>
+          <input type="text" class="blg-suffix-input" id="ahp-suffix"
+            placeholder="00001" maxlength="5" inputmode="numeric" pattern="[0-9]*"
+            oninput="onAHPInput(this)" autocomplete="off">
+          <span class="id-status" id="ahp-icon"></span>
         </div>
       </div>
-      <div class="assign-result" id="hp-assign-result">
-        <div class="name" id="hp-assign-name"></div>
-        <div class="meta" id="hp-assign-meta"></div>
+      <div class="assign-result" id="ahp-result">
+        <div class="ar-name" id="ahp-name"></div>
+        <div class="ar-meta" id="ahp-meta"></div>
       </div>
     </div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal('assign-hp-modal')">Cancel</button>
-      <button class="btn btn-primary" id="confirm-assign-btn" onclick="confirmAssignHP()" disabled>Confirm Assignment</button>
+      <button class="btn btn-primary" id="ahp-confirm-btn" onclick="confirmAssignHP()" disabled>Confirm</button>
     </div>
   </div>
 </div>
 
-<!-- REPORT MODAL -->
+<!-- Add Group (PP) -->
+<div class="modal-overlay" id="add-group-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('add-group-modal')">✕</button>
+    <div class="modal-title">Add BLG Group</div>
+    <div class="modal-sub">Enter a BLG Group ID to add it to your dashboard.</div>
+    <div class="blg-field">
+      <label for="ag-suffix">BLG Group ID</label>
+      <div class="blg-input-wrap" id="ag-wrap">
+        <span class="blg-prefix">BLG-</span>
+        <div class="id-wrap">
+          <input type="text" class="blg-suffix-input" id="ag-suffix"
+            placeholder="G0001" maxlength="6"
+            oninput="onAGInput(this)" autocomplete="off" style="letter-spacing:0.05em">
+          <span class="id-status" id="ag-icon"></span>
+        </div>
+      </div>
+      <div class="assign-result" id="ag-result">
+        <div class="ar-name" id="ag-name"></div>
+        <div class="ar-meta" id="ag-meta"></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('add-group-modal')">Cancel</button>
+      <button class="btn btn-primary" id="ag-confirm-btn" onclick="confirmAddGroup()" disabled>Add Group</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Partner Pastor (HP) -->
+<div class="modal-overlay" id="add-pp-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('add-pp-modal')">✕</button>
+    <div class="modal-title">Add Partner Pastor</div>
+    <div class="modal-sub">Enter a Partner Pastor's BLG Leader ID to add them to your network.</div>
+    <div class="blg-field">
+      <label for="app-suffix">Partner Pastor BLG ID</label>
+      <div class="blg-input-wrap" id="app-wrap">
+        <span class="blg-prefix">BLG-</span>
+        <div class="id-wrap">
+          <input type="text" class="blg-suffix-input" id="app-suffix"
+            placeholder="00002" maxlength="5" inputmode="numeric" pattern="[0-9]*"
+            oninput="onAPPInput(this)" autocomplete="off">
+          <span class="id-status" id="app-icon"></span>
+        </div>
+      </div>
+      <div class="assign-result" id="app-result">
+        <div class="ar-name" id="app-name"></div>
+        <div class="ar-meta" id="app-meta"></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('add-pp-modal')">Cancel</button>
+      <button class="btn btn-primary" id="app-confirm-btn" onclick="confirmAddPP()" disabled>Add Partner Pastor</button>
+    </div>
+  </div>
+</div>
+
+<!-- Role settings -->
+<div class="modal-overlay" id="role-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('role-modal')">✕</button>
+    <div class="modal-title">Role Settings</div>
+    <div class="modal-sub">Change your leadership role.</div>
+    <div class="role-btns" style="justify-content:flex-start;flex-direction:column;gap:10px">
+      <div class="role-btn" id="role-btn-hp" onclick="setRole('Hub Pastor')" style="display:flex;align-items:center;gap:12px;padding:14px 18px">
+        <span style="font-size:22px">🏛</span>
+        <div>
+          <div class="role-name" style="text-align:left">Hub Pastor</div>
+          <div class="role-desc" style="text-align:left">Oversees Partner Pastors</div>
+        </div>
+      </div>
+      <div class="role-btn" id="role-btn-pp" onclick="setRole('Partner Pastor')" style="display:flex;align-items:center;gap:12px;padding:14px 18px">
+        <span style="font-size:22px">🤝</span>
+        <div>
+          <div class="role-name" style="text-align:left">Partner Pastor</div>
+          <div class="role-desc" style="text-align:left">Leads BLG Groups directly</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
+      <button class="btn btn-danger btn-sm" style="width:100%" onclick="confirmSignOut()">Sign Out & Clear Local Data</button>
+    </div>
+  </div>
+</div>
+
+<!-- Report -->
 <div class="modal-overlay" id="report-modal">
   <div class="modal" style="max-width:580px">
     <button class="modal-close" onclick="closeModal('report-modal')">✕</button>
     <div class="modal-title">Check-In Report</div>
-    <div class="modal-sub">Showing attendance for all groups in your network.</div>
-    <div style="display:flex;gap:10px;margin-bottom:16px">
-      <div class="form-row" style="flex:1;margin:0">
-        <label>From</label>
-        <input type="date" class="form-input" id="report-start">
-      </div>
-      <div class="form-row" style="flex:1;margin:0">
-        <label>To</label>
-        <input type="date" class="form-input" id="report-end">
-      </div>
+    <div class="modal-sub">Attendance for all groups in your network.</div>
+    <div style="display:flex;gap:10px;margin-bottom:14px">
+      <div class="form-row" style="flex:1;margin:0"><label>From</label><input type="date" class="form-input" id="report-start"></div>
+      <div class="form-row" style="flex:1;margin:0"><label>To</label><input type="date" class="form-input" id="report-end"></div>
     </div>
-    <button class="btn btn-navy btn-sm" style="margin-bottom:16px" onclick="runReport()">Run Report</button>
-    <div class="report-table-wrap" id="report-results">
-      <div class="empty-state"><p>Select a date range and click Run Report.</p></div>
-    </div>
+    <button class="btn btn-navy btn-sm" style="margin-bottom:14px" onclick="runReport()">Run Report</button>
+    <div id="report-results"><div class="empty-state"><p>Select a date range and click Run Report.</p></div></div>
   </div>
 </div>
 
-<!-- Toast -->
 <div id="toast"></div>
 
+<!-- ════════════════════════════════ SCRIPT ════════════════════════════════ -->
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbxmSUtTk50by7M-Y3-RuTrRlnUjw42UwsFDm2PavJmmsp9cbDoh2_qdVLL7IvpFjisB9A/exec';
 
-let currentLeader = null;
-let verifiedHPAssign = null;
-let hpAssignTimer = null;
-let entryTimer = null;
+let session = null; // { uid, first, last, role, reportsTo }
+let localData = {}; // cached localStorage data
+
+// ── LocalStorage helpers ──────────────────────────────────────────
+function lsKey(uid)  { return 'blg-hub-' + uid; }
+function loadLocal(uid) {
+  try { return JSON.parse(localStorage.getItem(lsKey(uid)) || '{}'); } catch(e) { return {}; }
+}
+function saveLocal(uid, data) {
+  try { localStorage.setItem(lsKey(uid), JSON.stringify(data)); } catch(e) {}
+}
 
 // ── Entry screen ──────────────────────────────────────────────────
+let entryTimer = null;
+
 function onEntryInput(input) {
   input.value = input.value.replace(/[^0-9]/g, '').slice(0, 5);
   clearTimeout(entryTimer);
-  const wrap = document.getElementById('entry-wrap');
-  const icon = document.getElementById('entry-icon');
+  setEntryState('idle');
+  session = null;
+  if (input.value.length < 5) return;
+  setEntryState('loading');
+  const uid = 'BLG-' + input.value.padStart(5, '0');
+  entryTimer = setTimeout(() => lookupEntry(uid), 500);
+}
+
+function setEntryState(state, data) {
+  const wrap   = document.getElementById('entry-wrap');
+  const icon   = document.getElementById('entry-icon');
   const result = document.getElementById('entry-result');
-  const btn = document.getElementById('enter-btn');
-  wrap.classList.remove('valid','invalid');
+  const btn    = document.getElementById('enter-btn');
+  wrap.classList.remove('valid', 'invalid');
   icon.innerHTML = '';
   result.classList.remove('show');
   btn.disabled = true;
-  currentLeader = null;
-  if (input.value.length < 5) return;
-  icon.innerHTML = '<div class="spinner"></div>';
-  const uid = 'BLG-' + input.value.padStart(5,'0');
-  entryTimer = setTimeout(() => lookupEntryLeader(uid), 500);
+  if (state === 'loading') {
+    icon.innerHTML = '<div class="spinner"></div>';
+  } else if (state === 'found') {
+    wrap.classList.add('valid');
+    icon.innerHTML = '<span style="color:var(--success);font-size:18px">✓</span>';
+    document.getElementById('entry-name').textContent = data.first + ' ' + data.last;
+    document.getElementById('entry-meta').textContent = data.uid + (data.city ? ' · ' + data.city : '') + (data.country ? ', ' + data.country : '');
+    result.classList.add('show');
+    btn.disabled = false;
+  } else if (state === 'notfound') {
+    wrap.classList.add('invalid');
+    icon.innerHTML = '<span style="color:var(--error);font-size:18px">✗</span>';
+    document.getElementById('entry-name').textContent = 'Leader not found';
+    document.getElementById('entry-meta').textContent = 'No leader found with this BLG ID.';
+    result.classList.add('show');
+  }
 }
 
-async function lookupEntryLeader(uid) {
-  const wrap = document.getElementById('entry-wrap');
-  const icon = document.getElementById('entry-icon');
-  const result = document.getElementById('entry-result');
-  const btn = document.getElementById('enter-btn');
+async function lookupEntry(uid) {
   try {
     const data = await apiGet({ type: 'lookupLeader', uid });
-    icon.innerHTML = '';
     if (data.found) {
-      wrap.classList.add('valid');
-      icon.innerHTML = '<span style="color:var(--success);font-size:18px">✓</span>';
-      document.getElementById('entry-name').textContent = data.firstName + ' ' + data.lastName;
-      document.getElementById('entry-meta').textContent = uid + (data.role ? ' · ' + data.role : '');
-      result.classList.add('show');
-      currentLeader = data;
-      currentLeader.uid = uid;
-      btn.disabled = false;
+      session = { uid, first: data.first || data.firstName || '', last: data.last || data.lastName || '', role: data.role || '', reportsTo: data.reportsTo || '' };
+      setEntryState('found', { ...session, uid });
     } else {
-      wrap.classList.add('invalid');
-      icon.innerHTML = '<span style="color:var(--error);font-size:18px">✗</span>';
-      document.getElementById('entry-name').textContent = 'Leader not found';
-      document.getElementById('entry-meta').textContent = uid + ' does not match any registered leader.';
-      result.classList.add('show');
+      setEntryState('notfound');
     }
   } catch(e) {
-    icon.innerHTML = '';
+    setEntryState('idle');
     showToast('Connection error — please try again.', 'error');
   }
 }
 
 function enterPortal() {
-  if (!currentLeader) return;
-  document.getElementById('entry-screen').style.display = 'none';
+  if (!session) return;
+  // Merge any locally saved role/reportsTo into session
+  localData = loadLocal(session.uid);
+  if (!session.role && localData.role) session.role = localData.role;
+  if (!session.reportsTo && localData.reportsTo) session.reportsTo = localData.reportsTo;
+  document.getElementById('entry-screen').style.display  = 'none';
   document.getElementById('dashboard-screen').style.display = 'block';
-  loadDashboard();
+  renderDashboard();
 }
 
 function signOut() {
-  currentLeader = null;
+  session = null;
+  localData = {};
   document.getElementById('dashboard-screen').style.display = 'none';
-  document.getElementById('entry-screen').style.display = 'flex';
+  document.getElementById('entry-screen').style.display  = 'flex';
   document.getElementById('entry-suffix').value = '';
-  document.getElementById('entry-wrap').classList.remove('valid','invalid');
-  document.getElementById('entry-icon').innerHTML = '';
-  document.getElementById('entry-result').classList.remove('show');
-  document.getElementById('enter-btn').disabled = true;
+  setEntryState('idle');
+}
+
+function confirmSignOut() {
+  if (!session) return;
+  try { localStorage.removeItem(lsKey(session.uid)); } catch(e) {}
+  closeModal('role-modal');
+  signOut();
+  showToast('Signed out and local data cleared.');
 }
 
 // ── Dashboard ──────────────────────────────────────────────────────
-async function loadDashboard() {
-  const role = currentLeader.role || 'Partner Pastor';
-  document.getElementById('dash-leader-name').textContent = currentLeader.firstName + ' ' + currentLeader.lastName;
-  document.getElementById('dash-leader-uid').textContent = currentLeader.uid;
-  document.getElementById('dash-role-badge').textContent = role;
+function renderDashboard() {
+  const role = session.role || '';
+  document.getElementById('dash-name').textContent = session.first + ' ' + session.last;
+  document.getElementById('dash-uid').textContent  = session.uid;
+  document.getElementById('dash-role-badge').textContent = role || 'No Role Set';
+
+  if (!role) {
+    document.getElementById('setup-prompt').style.display = 'block';
+    document.getElementById('hp-view').style.display  = 'none';
+    document.getElementById('pp-view').style.display  = 'none';
+    document.getElementById('hp-assign-section').style.display = 'none';
+    document.getElementById('stat-pps').textContent = '—';
+    document.getElementById('stat-groups').textContent = '—';
+    document.getElementById('stat-total-groups').textContent = '—';
+    return;
+  }
+  document.getElementById('setup-prompt').style.display = 'none';
 
   if (role === 'Hub Pastor') {
     document.getElementById('hp-view').style.display = 'block';
     document.getElementById('pp-view').style.display = 'none';
-    document.getElementById('assign-hp-section').style.display = 'none';
-    loadHPDashboard();
+    document.getElementById('hp-assign-section').style.display = 'none';
+    renderHPView();
   } else {
     document.getElementById('pp-view').style.display = 'block';
     document.getElementById('hp-view').style.display = 'none';
-    document.getElementById('assign-hp-section').style.display = 'block';
-    loadPPDashboard();
+    document.getElementById('hp-assign-section').style.display = 'block';
+    renderPPView();
   }
 }
 
-async function loadHPDashboard() {
-  try {
-    const data = await apiGet({ type: 'getHierarchy', uid: currentLeader.uid });
-    const ppList = data.partnerPastors || [];
-    document.getElementById('stat-pp').textContent = ppList.length;
-    let totalGroups = 0;
-    let totalCheckins = 0;
-    ppList.forEach(pp => {
-      totalGroups += (pp.groups || []).length;
-      totalCheckins += (pp.groups || []).reduce((s, g) => s + (g.checkinsThisWeek || 0), 0);
-    });
-    document.getElementById('stat-groups').textContent = totalGroups;
-    document.getElementById('stat-checkins').textContent = totalCheckins;
-    renderPPList(ppList);
-  } catch(e) {
-    document.getElementById('pp-list').innerHTML = '<div class="empty-state"><p>Could not load network. Please try again.</p></div>';
-  }
-}
+// ── Hub Pastor view ────────────────────────────────────────────────
+function renderHPView() {
+  const pps = localData.partnerPastors || [];
+  let totalGroups = 0;
+  pps.forEach(pp => { totalGroups += (pp.groups || []).length; });
+  document.getElementById('stat-pps').textContent = pps.length;
+  document.getElementById('stat-groups').textContent = (localData.groups || []).length;
+  document.getElementById('stat-total-groups').textContent = totalGroups + (localData.groups || []).length;
 
-function renderPPList(ppList) {
+  // Show cloud-pending note if using localStorage
+  document.getElementById('hp-cloud-note').style.display = 'block';
+
   const container = document.getElementById('pp-list');
-  if (!ppList.length) {
-    container.innerHTML = '<div class="empty-state"><p>No Partner Pastors found in your network yet.</p></div>';
+  if (!pps.length) {
+    container.innerHTML = '<div class="empty-state"><p>No Partner Pastors yet. Click <strong>+ Add Partner Pastor</strong> to add one.</p></div>';
     return;
   }
-  container.innerHTML = ppList.map((pp, i) => {
-    const initials = (pp.firstName || '?')[0] + (pp.lastName || '?')[0];
+  container.innerHTML = pps.map((pp, i) => {
+    const init = ((pp.first||'?')[0] + (pp.last||'?')[0]).toUpperCase();
     const groups = pp.groups || [];
-    return `
-      <div class="pp-card" id="pp-card-${i}">
-        <div class="pp-card-header" onclick="togglePP(${i})">
-          <div class="pp-avatar">${initials}</div>
-          <div class="pp-info">
-            <div class="pp-name">${pp.firstName} ${pp.lastName}</div>
-            <div class="pp-meta">${pp.uid} · ${pp.city || ''}${pp.country ? ', '+pp.country : ''}</div>
-          </div>
-          <div class="pp-right">
-            <span class="group-count-badge">${groups.length} group${groups.length !== 1 ? 's' : ''}</span>
-            <span class="chevron">▾</span>
-          </div>
+    return `<div class="pp-card" id="pp-card-${i}">
+      <div class="pp-card-header" onclick="togglePP(${i})">
+        <div class="pp-avatar">${init}</div>
+        <div class="pp-info">
+          <div class="pp-name">${pp.first} ${pp.last}</div>
+          <div class="pp-meta">${pp.uid}${pp.city ? ' · ' + pp.city : ''}</div>
         </div>
-        <div class="pp-groups">
-          ${groups.length ? `
-            <div class="group-list">
-              ${groups.map(g => `
-                <div class="group-row">
-                  <div class="group-dot"></div>
-                  <div class="group-info">
-                    <div class="g-name">${g.name || g.uid}</div>
-                    <div class="g-meta">${g.uid} · ${g.city || ''}${g.country ? ', '+g.country : ''}</div>
-                  </div>
-                  <div class="group-actions">
-                    <button class="btn btn-outline btn-sm" onclick="openCheckin('${g.uid}','${(g.name||g.uid).replace(/'/g,"\\'")}')">Check In</button>
-                  </div>
-                </div>`).join('')}
-            </div>` : '<div class="empty-state" style="padding:16px"><p>No groups assigned yet.</p></div>'}
+        <div class="pp-right">
+          <span class="count-badge">${groups.length} group${groups.length!==1?'s':''}</span>
+          <span class="count-badge" style="cursor:pointer;background:var(--error);color:#fff;border-color:var(--error)" onclick="event.stopPropagation();removePP('${pp.uid}')">✕</span>
+          <span class="chevron">▾</span>
         </div>
-      </div>`;
+      </div>
+      <div class="pp-groups">
+        ${groups.length ? `<div class="group-list">${groups.map(g => `
+          <div class="group-row">
+            <div class="group-dot"></div>
+            <div class="group-info">
+              <div class="g-name">${g.name || g.uid}</div>
+              <div class="g-meta">${g.uid}${g.city ? ' · ' + g.city : ''}</div>
+            </div>
+            <div class="group-actions">
+              <button class="btn btn-outline btn-xs" onclick="openCheckin('${g.uid}','${esc(g.name||g.uid)}')">Check In</button>
+            </div>
+          </div>`).join('')}
+        </div>` : '<div class="empty-state" style="padding:14px"><p>No groups under this pastor yet.</p></div>'}
+      </div>
+    </div>`;
   }).join('');
 }
 
-function togglePP(i) {
-  const card = document.getElementById('pp-card-' + i);
-  card.classList.toggle('expanded');
+function togglePP(i) { document.getElementById('pp-card-' + i).classList.toggle('expanded'); }
+
+function removePP(uid) {
+  if (!confirm('Remove this Partner Pastor from your network?')) return;
+  localData.partnerPastors = (localData.partnerPastors || []).filter(p => p.uid !== uid);
+  saveLocal(session.uid, localData);
+  renderHPView();
 }
 
-async function loadPPDashboard() {
-  try {
-    const data = await apiGet({ type: 'getHierarchy', uid: currentLeader.uid });
-    const groups = data.groups || [];
-    document.getElementById('stat-pp').parentElement.style.display = 'none';
-    document.getElementById('stat-groups').textContent = groups.length;
-    const totalCI = groups.reduce((s, g) => s + (g.checkinsThisWeek || 0), 0);
-    document.getElementById('stat-checkins').textContent = totalCI;
-    renderMyGroups(groups);
+// ── Partner Pastor view ────────────────────────────────────────────
+function renderPPView() {
+  const groups = localData.groups || [];
+  document.getElementById('stat-pps').closest('.stat-card').style.display = 'none';
+  document.getElementById('stat-groups').textContent = groups.length;
+  document.getElementById('stat-total-groups').textContent = groups.length;
+  document.getElementById('pp-cloud-note').style.display = 'block';
 
-    // Show current Hub Pastor
-    const hpDisplay = document.getElementById('current-hp-display');
-    if (data.hubPastor) {
-      hpDisplay.innerHTML = `<div class="current-hp-tag">🔗 ${data.hubPastor.firstName} ${data.hubPastor.lastName} (${data.hubPastor.uid})</div><br>`;
-    } else {
-      hpDisplay.innerHTML = '<p style="color:var(--error);font-size:13px;margin-bottom:10px">⚠ Not yet assigned to a Hub Pastor.</p>';
-    }
-  } catch(e) {
-    document.getElementById('my-groups-list').innerHTML = '<div class="empty-state"><p>Could not load groups. Please try again.</p></div>';
+  // Hub Pastor display
+  const hpDisplay = document.getElementById('current-hp-display');
+  const hp = localData.hubPastor;
+  if (hp) {
+    hpDisplay.innerHTML = `<div class="current-hp-tag">🔗 ${hp.first} ${hp.last} (${hp.uid})</div><br>`;
+  } else if (session.reportsTo) {
+    hpDisplay.innerHTML = `<div class="current-hp-tag">🔗 ${session.reportsTo}</div><br>`;
+  } else {
+    hpDisplay.innerHTML = '<p style="color:var(--error);font-size:12px;margin-bottom:10px">⚠ Not yet assigned to a Hub Pastor.</p>';
   }
-}
 
-function renderMyGroups(groups) {
   const container = document.getElementById('my-groups-list');
   if (!groups.length) {
-    container.innerHTML = '<div class="empty-state"><p>No BLG groups found under your leadership yet.</p></div>';
+    container.innerHTML = '<div class="empty-state"><p>No groups yet. Click <strong>+ Add Group</strong> to add a BLG group.</p></div>';
     return;
   }
-  container.innerHTML = `<div class="group-list">${groups.map(g => `
+  container.innerHTML = groups.map(g => `
     <div class="group-row">
       <div class="group-dot"></div>
       <div class="group-info">
         <div class="g-name">${g.name || g.uid}</div>
-        <div class="g-meta">${g.uid} · ${g.city || ''}${g.country ? ', '+g.country : ''}</div>
+        <div class="g-meta">${g.uid}${g.city ? ' · ' + g.city : ''}</div>
       </div>
       <div class="group-actions">
-        <button class="btn btn-outline btn-sm" onclick="openCheckin('${g.uid}','${(g.name||g.uid).replace(/'/g,"\\'")}')">Check In</button>
+        <button class="btn btn-outline btn-xs" onclick="openCheckin('${g.uid}','${esc(g.name||g.uid)}')">Check In</button>
+        <button class="btn btn-ghost btn-xs" onclick="removeGroup('${g.uid}')">✕</button>
       </div>
-    </div>`).join('')}
-  </div>`;
+    </div>`).join('');
 }
 
-// ── Check-in modal ────────────────────────────────────────────────
+function removeGroup(uid) {
+  localData.groups = (localData.groups || []).filter(g => g.uid !== uid);
+  saveLocal(session.uid, localData);
+  renderPPView();
+}
+
+// ── Role setup ────────────────────────────────────────────────────
+function setRole(role) {
+  session.role = role;
+  localData.role = role;
+  saveLocal(session.uid, localData);
+  closeModal('role-modal');
+  renderDashboard();
+  showToast('Role set to ' + role + '.', 'success');
+}
+
+// ── Add Group modal (PP) ──────────────────────────────────────────
+let agTimer = null;
+let verifiedGroup = null;
+
+function openAddGroupModal() {
+  verifiedGroup = null;
+  document.getElementById('ag-suffix').value = '';
+  resetLookup('ag-wrap', 'ag-icon', 'ag-result', 'ag-confirm-btn');
+  openModal('add-group-modal');
+}
+
+function onAGInput(input) {
+  input.value = input.value.replace(/[^0-9A-Za-z]/g, '').slice(0, 6);
+  clearTimeout(agTimer);
+  verifiedGroup = null;
+  resetLookup('ag-wrap', 'ag-icon', 'ag-result', 'ag-confirm-btn');
+  if (input.value.length < 4) return;
+  document.getElementById('ag-icon').innerHTML = '<div class="spinner"></div>';
+  const uid = 'BLG-' + input.value.toUpperCase();
+  agTimer = setTimeout(() => lookupGroup(uid), 600);
+}
+
+async function lookupGroup(uid) {
+  try {
+    const data = await apiGet({ type: 'lookupGroup', uid });
+    document.getElementById('ag-icon').innerHTML = '';
+    if (data.found) {
+      document.getElementById('ag-wrap').classList.add('valid');
+      document.getElementById('ag-icon').innerHTML = '<span style="color:var(--success);font-size:18px">✓</span>';
+      document.getElementById('ag-name').textContent = data.name || uid;
+      document.getElementById('ag-meta').textContent = uid + (data.city ? ' · ' + data.city : '') + (data.country ? ', ' + data.country : '');
+      document.getElementById('ag-result').classList.add('show');
+      verifiedGroup = { uid, name: data.name || uid, city: data.city || '', country: data.country || '' };
+      document.getElementById('ag-confirm-btn').disabled = false;
+    } else {
+      document.getElementById('ag-wrap').classList.add('invalid');
+      document.getElementById('ag-icon').innerHTML = '<span style="color:var(--error);font-size:18px">✗</span>';
+      document.getElementById('ag-name').textContent = 'Group not found';
+      document.getElementById('ag-meta').textContent = uid + ' does not match any registered group.';
+      document.getElementById('ag-result').classList.add('show');
+    }
+  } catch(e) { document.getElementById('ag-icon').innerHTML = ''; showToast('Connection error.', 'error'); }
+}
+
+function confirmAddGroup() {
+  if (!verifiedGroup) return;
+  localData.groups = localData.groups || [];
+  if (localData.groups.find(g => g.uid === verifiedGroup.uid)) {
+    showToast('That group is already in your list.', 'error');
+    return;
+  }
+  localData.groups.push(verifiedGroup);
+  saveLocal(session.uid, localData);
+  closeModal('add-group-modal');
+  renderPPView();
+  showToast('Group added!', 'success');
+}
+
+// ── Add Partner Pastor modal (HP) ─────────────────────────────────
+let appTimer = null;
+let verifiedPP = null;
+
+function openAddPPModal() {
+  verifiedPP = null;
+  document.getElementById('app-suffix').value = '';
+  resetLookup('app-wrap', 'app-icon', 'app-result', 'app-confirm-btn');
+  openModal('add-pp-modal');
+}
+
+function onAPPInput(input) {
+  input.value = input.value.replace(/[^0-9]/g, '').slice(0, 5);
+  clearTimeout(appTimer);
+  verifiedPP = null;
+  resetLookup('app-wrap', 'app-icon', 'app-result', 'app-confirm-btn');
+  if (input.value.length < 5) return;
+  document.getElementById('app-icon').innerHTML = '<div class="spinner"></div>';
+  const uid = 'BLG-' + input.value.padStart(5, '0');
+  appTimer = setTimeout(() => lookupPP(uid), 500);
+}
+
+async function lookupPP(uid) {
+  try {
+    const data = await apiGet({ type: 'lookupLeader', uid });
+    document.getElementById('app-icon').innerHTML = '';
+    if (data.found) {
+      document.getElementById('app-wrap').classList.add('valid');
+      document.getElementById('app-icon').innerHTML = '<span style="color:var(--success);font-size:18px">✓</span>';
+      const name = (data.first || data.firstName || '') + ' ' + (data.last || data.lastName || '');
+      document.getElementById('app-name').textContent = name.trim() || uid;
+      document.getElementById('app-meta').textContent = uid + (data.city ? ' · ' + data.city : '');
+      document.getElementById('app-result').classList.add('show');
+      verifiedPP = { uid, first: data.first || data.firstName || '', last: data.last || data.lastName || '', city: data.city || '', groups: [] };
+      document.getElementById('app-confirm-btn').disabled = false;
+    } else {
+      document.getElementById('app-wrap').classList.add('invalid');
+      document.getElementById('app-icon').innerHTML = '<span style="color:var(--error);font-size:18px">✗</span>';
+      document.getElementById('app-name').textContent = 'Leader not found';
+      document.getElementById('app-meta').textContent = uid + ' does not match any registered leader.';
+      document.getElementById('app-result').classList.add('show');
+    }
+  } catch(e) { document.getElementById('app-icon').innerHTML = ''; showToast('Connection error.', 'error'); }
+}
+
+function confirmAddPP() {
+  if (!verifiedPP) return;
+  localData.partnerPastors = localData.partnerPastors || [];
+  if (localData.partnerPastors.find(p => p.uid === verifiedPP.uid)) {
+    showToast('That leader is already in your network.', 'error');
+    return;
+  }
+  // Also pull in any groups they have locally stored
+  const ppData = loadLocal(verifiedPP.uid);
+  if (ppData.groups) verifiedPP.groups = ppData.groups;
+  localData.partnerPastors.push(verifiedPP);
+  saveLocal(session.uid, localData);
+  closeModal('add-pp-modal');
+  renderHPView();
+  showToast('Partner Pastor added!', 'success');
+}
+
+// ── Assign Hub Pastor (PP) ────────────────────────────────────────
+let ahpTimer = null;
+let verifiedHP = null;
+
+function openAssignHPModal() {
+  verifiedHP = null;
+  document.getElementById('ahp-suffix').value = '';
+  resetLookup('ahp-wrap', 'ahp-icon', 'ahp-result', 'ahp-confirm-btn');
+  openModal('assign-hp-modal');
+}
+
+function onAHPInput(input) {
+  input.value = input.value.replace(/[^0-9]/g, '').slice(0, 5);
+  clearTimeout(ahpTimer);
+  verifiedHP = null;
+  resetLookup('ahp-wrap', 'ahp-icon', 'ahp-result', 'ahp-confirm-btn');
+  if (input.value.length < 5) return;
+  document.getElementById('ahp-icon').innerHTML = '<div class="spinner"></div>';
+  const uid = 'BLG-' + input.value.padStart(5, '0');
+  ahpTimer = setTimeout(() => lookupHP(uid), 500);
+}
+
+async function lookupHP(uid) {
+  try {
+    const data = await apiGet({ type: 'lookupLeader', uid });
+    document.getElementById('ahp-icon').innerHTML = '';
+    if (data.found) {
+      document.getElementById('ahp-wrap').classList.add('valid');
+      document.getElementById('ahp-icon').innerHTML = '<span style="color:var(--success);font-size:18px">✓</span>';
+      const name = (data.first || data.firstName || '') + ' ' + (data.last || data.lastName || '');
+      document.getElementById('ahp-name').textContent = name.trim() || uid;
+      document.getElementById('ahp-meta').textContent = uid + (data.city ? ' · ' + data.city : '');
+      document.getElementById('ahp-result').classList.add('show');
+      verifiedHP = { uid, first: data.first || data.firstName || '', last: data.last || data.lastName || '' };
+      document.getElementById('ahp-confirm-btn').disabled = false;
+    } else {
+      document.getElementById('ahp-wrap').classList.add('invalid');
+      document.getElementById('ahp-icon').innerHTML = '<span style="color:var(--error);font-size:18px">✗</span>';
+      document.getElementById('ahp-name').textContent = 'Leader not found';
+      document.getElementById('ahp-meta').textContent = uid + ' does not match any registered leader.';
+      document.getElementById('ahp-result').classList.add('show');
+    }
+  } catch(e) { document.getElementById('ahp-icon').innerHTML = ''; showToast('Connection error.', 'error'); }
+}
+
+function confirmAssignHP() {
+  if (!verifiedHP) return;
+  localData.hubPastor = verifiedHP;
+  localData.reportsTo = verifiedHP.uid;
+  session.reportsTo = verifiedHP.uid;
+  saveLocal(session.uid, localData);
+  closeModal('assign-hp-modal');
+  renderPPView();
+  showToast('Hub Pastor assigned!', 'success');
+}
+
+// ── Check-in ──────────────────────────────────────────────────────
 function openCheckin(groupUID, groupName) {
   document.getElementById('checkin-group-uid').value = groupUID;
-  document.getElementById('checkin-group-name').textContent = groupName;
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('checkin-date').value = today;
+  document.getElementById('checkin-group-label').textContent = groupName;
+  document.getElementById('checkin-date').value = new Date().toISOString().split('T')[0];
   document.getElementById('checkin-count').value = '';
   document.getElementById('checkin-notes').value = '';
   openModal('checkin-modal');
@@ -887,159 +903,86 @@ function openCheckin(groupUID, groupName) {
 
 async function submitCheckin() {
   const groupUID = document.getElementById('checkin-group-uid').value;
-  const date = document.getElementById('checkin-date').value;
-  const count = document.getElementById('checkin-count').value;
-  const notes = document.getElementById('checkin-notes').value;
-  if (!date || !count) { showToast('Please fill in date and attendee count.', 'error'); return; }
-  const btn = document.querySelector('#checkin-modal .btn-success');
-  btn.disabled = true; btn.textContent = 'Submitting...';
+  const date     = document.getElementById('checkin-date').value;
+  const count    = document.getElementById('checkin-count').value;
+  const notes    = document.getElementById('checkin-notes').value;
+  if (!date || !count || parseInt(count) < 1) { showToast('Please enter a date and attendee count.', 'error'); return; }
+  const btn = document.getElementById('checkin-submit-btn');
+  btn.disabled = true; btn.textContent = 'Submitting…';
   try {
-    const data = await apiPost({ type: 'checkin', groupUID, leaderUID: currentLeader.uid, date, attendees: parseInt(count), notes });
+    const data = await apiPost({ type: 'checkin', groupUID, leaderUID: session.uid, date, attendees: parseInt(count), notes });
     if (data.success) {
       showToast('Check-in submitted!', 'success');
       closeModal('checkin-modal');
     } else {
       showToast(data.message || 'Submission failed.', 'error');
     }
-  } catch(e) {
-    showToast('Connection error. Please try again.', 'error');
-  }
+  } catch(e) { showToast('Connection error. Please try again.', 'error'); }
   btn.disabled = false; btn.textContent = 'Submit ✓';
 }
 
-// ── Assign Hub Pastor modal ───────────────────────────────────────
-function openAssignHPModal() {
-  verifiedHPAssign = null;
-  document.getElementById('hp-assign-suffix').value = '';
-  document.getElementById('hp-assign-wrap').classList.remove('valid','invalid');
-  document.getElementById('hp-assign-icon').innerHTML = '';
-  document.getElementById('hp-assign-result').classList.remove('show');
-  document.getElementById('confirm-assign-btn').disabled = true;
-  openModal('assign-hp-modal');
-}
-
-function onHPAssignInput(input) {
-  input.value = input.value.replace(/[^0-9]/g, '').slice(0, 5);
-  clearTimeout(hpAssignTimer);
-  verifiedHPAssign = null;
-  const wrap = document.getElementById('hp-assign-wrap');
-  const icon = document.getElementById('hp-assign-icon');
-  const result = document.getElementById('hp-assign-result');
-  const btn = document.getElementById('confirm-assign-btn');
-  wrap.classList.remove('valid','invalid');
-  icon.innerHTML = '';
-  result.classList.remove('show');
-  btn.disabled = true;
-  if (input.value.length < 5) return;
-  icon.innerHTML = '<div class="spinner"></div>';
-  const uid = 'BLG-' + input.value.padStart(5,'0');
-  hpAssignTimer = setTimeout(() => lookupHPAssign(uid), 500);
-}
-
-async function lookupHPAssign(uid) {
-  const wrap = document.getElementById('hp-assign-wrap');
-  const icon = document.getElementById('hp-assign-icon');
-  const result = document.getElementById('hp-assign-result');
-  const btn = document.getElementById('confirm-assign-btn');
-  try {
-    const data = await apiGet({ type: 'lookupLeader', uid });
-    icon.innerHTML = '';
-    if (data.found) {
-      const isHubPastor = (data.role || '').toLowerCase().includes('hub');
-      if (!isHubPastor) {
-        wrap.classList.add('invalid');
-        icon.innerHTML = '<span style="color:var(--error);font-size:18px">✗</span>';
-        document.getElementById('hp-assign-name').textContent = data.firstName + ' ' + data.lastName + ' — not a Hub Pastor';
-        document.getElementById('hp-assign-meta').textContent = 'This leader does not have a Hub Pastor role.';
-        result.classList.add('show');
-        return;
-      }
-      wrap.classList.add('valid');
-      icon.innerHTML = '<span style="color:var(--success);font-size:18px">✓</span>';
-      document.getElementById('hp-assign-name').textContent = data.firstName + ' ' + data.lastName;
-      document.getElementById('hp-assign-meta').textContent = uid + ' · Hub Pastor';
-      result.classList.add('show');
-      verifiedHPAssign = { uid, ...data };
-      btn.disabled = false;
-    } else {
-      wrap.classList.add('invalid');
-      icon.innerHTML = '<span style="color:var(--error);font-size:18px">✗</span>';
-      document.getElementById('hp-assign-name').textContent = 'Leader not found';
-      document.getElementById('hp-assign-meta').textContent = uid + ' does not match any registered leader.';
-      result.classList.add('show');
-    }
-  } catch(e) { icon.innerHTML = ''; showToast('Connection error.', 'error'); }
-}
-
-async function confirmAssignHP() {
-  if (!verifiedHPAssign) return;
-  const btn = document.getElementById('confirm-assign-btn');
-  btn.disabled = true; btn.textContent = 'Saving...';
-  try {
-    const data = await apiPost({
-      type: 'assignReportsTo',
-      leaderUID: currentLeader.uid,
-      supervisorUID: verifiedHPAssign.uid
-    });
-    if (data.success) {
-      showToast('Hub Pastor assigned!', 'success');
-      closeModal('assign-hp-modal');
-      currentLeader.reportsTo = verifiedHPAssign.uid;
-      loadPPDashboard();
-    } else {
-      showToast(data.message || 'Assignment failed.', 'error');
-    }
-  } catch(e) { showToast('Connection error.', 'error'); }
-  btn.disabled = false; btn.textContent = 'Confirm Assignment';
-}
-
-// ── Report modal ──────────────────────────────────────────────────
+// ── Report ────────────────────────────────────────────────────────
 function openReportModal() {
   const today = new Date();
-  const weekAgo = new Date(today.getTime() - 7*24*60*60*1000);
-  document.getElementById('report-end').value = today.toISOString().split('T')[0];
-  document.getElementById('report-start').value = weekAgo.toISOString().split('T')[0];
+  const month = new Date(today.getFullYear(), today.getMonth(), 1);
+  document.getElementById('report-end').value   = today.toISOString().split('T')[0];
+  document.getElementById('report-start').value = month.toISOString().split('T')[0];
   document.getElementById('report-results').innerHTML = '<div class="empty-state"><p>Select a date range and click Run Report.</p></div>';
   openModal('report-modal');
 }
 
 async function runReport() {
   const start = document.getElementById('report-start').value;
-  const end = document.getElementById('report-end').value;
+  const end   = document.getElementById('report-end').value;
   if (!start || !end) { showToast('Please select a date range.', 'error'); return; }
   const container = document.getElementById('report-results');
-  container.innerHTML = '<div class="loading-wrap"><div class="big-spinner" style="width:28px;height:28px;border-width:2px"></div></div>';
+  container.innerHTML = '<div class="loading-wrap" style="padding:24px"><div class="big-spinner" style="width:24px;height:24px;border-width:2px"></div></div>';
   try {
-    const data = await apiGet({ type: 'getCheckinReport', uid: currentLeader.uid, startDate: start, endDate: end });
+    const data = await apiGet({ type: 'getCheckinReport', uid: session.uid, startDate: start, endDate: end });
     const rows = data.rows || [];
     if (!rows.length) {
       container.innerHTML = '<div class="empty-state"><p>No check-ins found in this date range.</p></div>';
       return;
     }
-    container.innerHTML = `<table class="report-table">
-      <thead><tr><th>Date</th><th>Group</th><th>Leader</th><th>Attendees</th></tr></thead>
-      <tbody>${rows.map(r => `
-        <tr>
-          <td>${r.date || ''}</td>
-          <td>${r.groupName || r.groupUID || ''}</td>
-          <td>${r.leaderName || r.leaderUID || ''}</td>
-          <td style="text-align:center;font-weight:600">${r.attendees || ''}</td>
-        </tr>`).join('')}
-      </tbody>
-    </table>`;
-  } catch(e) { container.innerHTML = '<div class="empty-state"><p>Error loading report. Please try again.</p></div>'; }
+    container.innerHTML = `<div class="report-table-wrap"><table class="report-table">
+      <thead><tr><th>Date</th><th>Group</th><th>Leader</th><th style="text-align:center">Attendees</th></tr></thead>
+      <tbody>${rows.map(r => `<tr>
+        <td>${r.date||''}</td>
+        <td>${r.groupName||r.groupUID||''}</td>
+        <td>${r.leaderName||r.leaderUID||''}</td>
+        <td style="text-align:center;font-weight:700">${r.attendees||''}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+  } catch(e) {
+    container.innerHTML = '<div class="empty-state"><p>Report not yet available. Update Apps Script to enable cloud reports.</p></div>';
+  }
 }
 
 // ── Utilities ─────────────────────────────────────────────────────
-function openModal(id) { document.getElementById(id).classList.add('open'); }
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openRoleModal() {
+  const role = session ? session.role : '';
+  document.getElementById('role-btn-hp').classList.toggle('selected', role === 'Hub Pastor');
+  document.getElementById('role-btn-pp').classList.toggle('selected', role === 'Partner Pastor');
+  openModal('role-modal');
+}
 
-function showToast(msg, type = '') {
+function resetLookup(wrapId, iconId, resultId, btnId) {
+  document.getElementById(wrapId).classList.remove('valid', 'invalid');
+  document.getElementById(iconId).innerHTML = '';
+  document.getElementById(resultId).classList.remove('show');
+  document.getElementById(btnId).disabled = true;
+}
+
+function esc(s) { return String(s).replace(/'/g, "\\'"); }
+
+function showToast(msg, type) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'show' + (type ? ' ' + type : '');
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => { t.className = ''; }, 3200);
+  clearTimeout(t._t);
+  t._t = setTimeout(() => { t.className = ''; }, 3200);
 }
 
 async function apiGet(params) {
@@ -1047,21 +990,14 @@ async function apiGet(params) {
   const res = await fetch(API + '?' + qs);
   return res.json();
 }
-
 async function apiPost(body) {
-  const res = await fetch(API, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
+  const res = await fetch(API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
   return res.json();
 }
 
 // Close modals on overlay click
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) overlay.classList.remove('open');
-  });
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
 });
 </script>
 </body>
