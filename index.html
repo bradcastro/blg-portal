@@ -98,6 +98,21 @@
   .met-fields-wrap { display:none; }
   .met-fields-wrap.show { display:block; }
 
+  /* HUB PASTOR MODAL */
+  .hp-modal-overlay { display:none; position:fixed; inset:0; background:rgba(10,18,38,0.72); z-index:500; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
+  .hp-modal-overlay.show { display:flex; }
+  .hp-modal { background:#fff; border-radius:18px; padding:36px 32px 28px; max-width:420px; width:100%; box-shadow:0 24px 80px rgba(15,31,61,0.35); text-align:center; }
+  .hp-modal-icon { width:56px; height:56px; background:var(--gold-pale); border:1.5px solid rgba(201,146,42,0.3); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:22px; margin:0 auto 18px; }
+  .hp-modal-badge { font-size:11px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+  .hp-modal-name { font-family:'Playfair Display',serif; font-size:26px; font-weight:700; color:var(--navy); margin-bottom:6px; line-height:1.2; }
+  .hp-modal-uid { font-size:13px; color:var(--text-soft); margin-bottom:20px; }
+  .hp-modal-question { font-size:16px; color:var(--text-mid); margin-bottom:24px; line-height:1.5; }
+  .hp-modal-actions { display:flex; flex-direction:column; gap:10px; }
+  .hp-modal-yes { padding:13px 20px; background:var(--gold); color:var(--navy); border:none; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:all 0.2s; }
+  .hp-modal-yes:hover { background:var(--gold-light); }
+  .hp-modal-no { padding:12px 20px; background:transparent; color:var(--text-mid); border:1.5px solid #E0D8CC; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; transition:all 0.2s; }
+  .hp-modal-no:hover { border-color:var(--navy); color:var(--navy); }
+
   /* SPINNER */
   .spinner { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; vertical-align:middle; margin-right:6px; }
   .spinner.dark { border-color:rgba(0,0,0,0.12); border-top-color:var(--gold); }
@@ -219,11 +234,22 @@
             <span class="field-hint">The Group ID of the leader who trained you. Leave blank if none.</span>
           </div>
 
-          <!-- HUB PASTOR — new optional field -->
+          <!-- HUB PASTOR — BLG lookup with modal confirmation -->
           <div class="form-group full">
             <label>Hub Pastor — Optional</label>
-            <input type="text" id="reg-hub-pastor" placeholder="Pastor's name or BLG number">
-            <span class="field-hint">If you have a hub pastor overseeing your group, enter their name or BLG number here.</span>
+            <div class="blg-input-wrap" id="hp-wrap">
+              <span class="blg-prefix">BLG-</span>
+              <div class="id-wrap">
+                <input type="text" class="blg-suffix-input" id="hp-suffix" placeholder="00001" maxlength="5" inputmode="numeric" pattern="[0-9]*" oninput="onHubPastorInput(this)">
+                <span class="id-status" id="hp-icon"></span>
+              </div>
+            </div>
+            <span class="field-hint">Enter your hub pastor's 5-digit BLG number — we'll confirm their name.</span>
+            <div class="verified-box" id="hp-verified">
+              <span>✅</span>
+              <div><strong id="hp-verified-name">—</strong><br><span style="font-size:12px;color:#1A5C38" id="hp-verified-uid">—</span></div>
+            </div>
+            <div class="err-box" id="hp-error">❌ No leader found with that BLG number. Please check and try again.</div>
           </div>
         </div>
         <button class="submit-btn gold" id="reg-btn" onclick="submitRegistration()">Register as a BLG Leader →</button>
@@ -440,6 +466,21 @@
   </div>
 </div>
 
+<!-- HUB PASTOR CONFIRMATION MODAL -->
+<div class="hp-modal-overlay" id="hp-modal-overlay">
+  <div class="hp-modal" role="dialog" aria-modal="true" aria-labelledby="hp-modal-name">
+    <div class="hp-modal-icon">✦</div>
+    <div class="hp-modal-badge">Hub Pastor Found</div>
+    <div class="hp-modal-name" id="hp-modal-name">—</div>
+    <div class="hp-modal-uid" id="hp-modal-uid">—</div>
+    <div class="hp-modal-question">Is this the correct hub pastor for your BLG?</div>
+    <div class="hp-modal-actions">
+      <button class="hp-modal-yes" onclick="confirmHubPastor()">Yes, this is my hub pastor ✓</button>
+      <button class="hp-modal-no" onclick="cancelHubPastor()">No, search again</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -577,6 +618,67 @@ function setTab(t){
 }
 
 // ── REGISTER ──
+// ── HUB PASTOR LOOKUP ──
+let hpTimer=null, hpPending=null, verifiedHubPastor=null;
+
+function onHubPastorInput(input){
+  input.value=input.value.replace(/[^0-9]/g,'').slice(0,5);
+  clearTimeout(hpTimer);
+  const wrap=document.getElementById('hp-wrap');
+  wrap.classList.remove('field-ok','field-error');
+  document.getElementById('hp-icon').textContent='';
+  document.getElementById('hp-verified').classList.remove('show');
+  document.getElementById('hp-error').classList.remove('show');
+  hpPending=null; verifiedHubPastor=null;
+  if(input.value.length<5) return;
+  const uid='BLG-'+input.value.padStart(5,'0');
+  hpTimer=setTimeout(()=>lookupHubPastor(uid),500);
+}
+async function lookupHubPastor(uid){
+  const icon=document.getElementById('hp-icon');
+  icon.innerHTML='<span class="spinner dark" style="width:12px;height:12px"></span>';
+  try{
+    const r=await apiGet({type:'lookupLeader',uid});
+    if(r.success&&r.found){
+      hpPending={uid,first:r.first,last:r.last};
+      document.getElementById('hp-modal-name').textContent=r.first+' '+r.last;
+      document.getElementById('hp-modal-uid').textContent=uid;
+      document.getElementById('hp-modal-overlay').classList.add('show');
+      icon.textContent='';
+    } else {
+      hpPending=null; verifiedHubPastor=null;
+      document.getElementById('hp-wrap').classList.add('field-error');
+      icon.textContent='❌';
+      document.getElementById('hp-verified').classList.remove('show');
+      document.getElementById('hp-error').classList.add('show');
+    }
+  }catch(e){ icon.textContent='⚠️'; showToast('Could not reach registry.','error'); }
+}
+function confirmHubPastor(){
+  if(!hpPending) return;
+  verifiedHubPastor=hpPending;
+  document.getElementById('hp-wrap').classList.add('field-ok');
+  document.getElementById('hp-icon').textContent='✅';
+  document.getElementById('hp-verified-name').textContent=hpPending.first+' '+hpPending.last;
+  document.getElementById('hp-verified-uid').textContent=hpPending.uid;
+  document.getElementById('hp-verified').classList.add('show');
+  document.getElementById('hp-error').classList.remove('show');
+  document.getElementById('hp-modal-overlay').classList.remove('show');
+  hpPending=null;
+}
+function cancelHubPastor(){
+  document.getElementById('hp-modal-overlay').classList.remove('show');
+  document.getElementById('hp-suffix').value='';
+  document.getElementById('hp-wrap').classList.remove('field-ok','field-error');
+  document.getElementById('hp-icon').textContent='';
+  document.getElementById('hp-verified').classList.remove('show');
+  document.getElementById('hp-error').classList.remove('show');
+  hpPending=null; verifiedHubPastor=null;
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('hp-modal-overlay').addEventListener('click',function(e){ if(e.target===this) cancelHubPastor(); });
+});
+
 async function submitRegistration(){
   const first=document.getElementById('reg-first').value.trim();
   const last=document.getElementById('reg-last').value.trim();
@@ -585,7 +687,8 @@ async function submitRegistration(){
   const country=document.getElementById('reg-country').value;
   const city=document.getElementById('reg-city').value.trim();
   const state=document.getElementById('reg-state').value||'';
-  const hubPastor=document.getElementById('reg-hub-pastor').value.trim();
+  const hubPastor=verifiedHubPastor?verifiedHubPastor.uid:'';
+  const hubPastorName=verifiedHubPastor?verifiedHubPastor.first+' '+verifiedHubPastor.last:'';
 
   if(!first||!last||!email||!phone||!country||!city){showToast('Please fill in all required fields.','error');return;}
   if(!email.includes('@')){showToast('Please enter a valid email.','error');return;}
@@ -597,7 +700,7 @@ async function submitRegistration(){
   const btn=document.getElementById('reg-btn');
   btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Registering...';
   try{
-    const r=await apiPost({ type:'registration', first, last, email, phone, country, state, city, referral, hubPastor });
+    const r=await apiPost({ type:'registration', first, last, email, phone, country, state, city, referral, hubPastor, hubPastorName });
     if(r.success){
       const s=getSession(); s.lastGroupUid=r.groupUid; setSession(s);
       document.getElementById('reg-form-card').style.display='none';
