@@ -236,7 +236,7 @@
 
           <!-- HUB PASTOR — BLG lookup with modal confirmation -->
           <div class="form-group full">
-            <label>Hub Pastor — Optional</label>
+            <label>Partner Pastor BLG Number *</label>
             <div class="blg-input-wrap" id="hp-wrap">
               <span class="blg-prefix">BLG-</span>
               <div class="id-wrap">
@@ -244,7 +244,7 @@
                 <span class="id-status" id="hp-icon"></span>
               </div>
             </div>
-            <span class="field-hint">Enter your hub pastor's 5-digit BLG number — we'll confirm their name.</span>
+            <span class="field-hint">Enter your partner pastor's 5-digit BLG number — we'll confirm their name.</span>
             <div class="verified-box" id="hp-verified">
               <span>✅</span>
               <div><strong id="hp-verified-name">—</strong><br><span style="font-size:12px;color:#1A5C38" id="hp-verified-uid">—</span></div>
@@ -470,12 +470,12 @@
 <div class="hp-modal-overlay" id="hp-modal-overlay">
   <div class="hp-modal" role="dialog" aria-modal="true" aria-labelledby="hp-modal-name">
     <div class="hp-modal-icon">✦</div>
-    <div class="hp-modal-badge">Hub Pastor Found</div>
+    <div class="hp-modal-badge">Partner Pastor Found</div>
     <div class="hp-modal-name" id="hp-modal-name">—</div>
     <div class="hp-modal-uid" id="hp-modal-uid">—</div>
-    <div class="hp-modal-question">Is this the correct hub pastor for your BLG?</div>
+    <div class="hp-modal-question">Is this the correct partner pastor for your BLG?</div>
     <div class="hp-modal-actions">
-      <button class="hp-modal-yes" onclick="confirmHubPastor()">Yes, this is my hub pastor ✓</button>
+      <button class="hp-modal-yes" onclick="confirmHubPastor()">Yes, this is my partner pastor ✓</button>
       <button class="hp-modal-no" onclick="cancelHubPastor()">No, search again</button>
     </div>
   </div>
@@ -691,6 +691,7 @@ async function submitRegistration(){
   const hubPastorName=verifiedHubPastor?verifiedHubPastor.first+' '+verifiedHubPastor.last:'';
 
   if(!first||!last||!email||!phone||!country||!city){showToast('Please fill in all required fields.','error');return;}
+  if(!verifiedHubPastor){showToast('Please enter and confirm your partner pastor\'s BLG number.','error');return;}
   if(!email.includes('@')){showToast('Please enter a valid email.','error');return;}
   if(!isValidPhone(phone)){showToast('Please enter a valid WhatsApp number with country code.','error');return;}
   if(STATE_DATA[country]&&!state){showToast('Please select your '+STATE_DATA[country].label.replace(' *','.')+'.','error');return;}
