@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLG Hub Portal — Bible Listening Groups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:       #0F1F3D;
+    --navy-mid:   #1A3260;
+    --navy-light: #243D6E;
+    --gold:       #C9922A;
+    --gold-light: #F0C96A;
+    --gold-pale:  #FDF6E3;
+    --cream:      #FAF7F2;
+    --cream-dk:   #F0EBE1;
+    --white:      #FFFDF8;
+    --text:       #1A1A1A;
+    --text-muted: #5A6070;
+    --border:     #D8D0C4;
+    --success:    #2A7A4B;
+    --error:      #C0392B;
+    --r:          8px;
+    --shadow:     0 2px 12px rgba(15,31,61,0.10);
+    --shadow-lg:  0 8px 32px rgba(15,31,61,0.16);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: var(--navy);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+  }
+  .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .logo-mark {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; font-weight: 700; color: var(--navy);
+  }
+  .logo-text { color: #fff; font-size: 14px; font-weight: 500; letter-spacing: 0.03em; }
+  .logo-text span { color: var(--gold-light); font-weight: 600; }
+  .portal-badge {
+    background: rgba(201,146,42,0.20);
+    border: 1px solid rgba(201,146,42,0.40);
+    color: var(--gold-light);
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* ── Main layout ── */
+  main { flex: 1; padding: 40px 24px; max-width: 900px; margin: 0 auto; width: 100%; }
+
+  /* ── Entry screen ── */
+  #entry-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 64px);
+    padding: 40px 0;
+  }
+  .entry-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 48px 44px;
+    width: 100%;
+    max-width: 460px;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+  }
+  .entry-icon {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, var(--navy), var(--navy-mid));
+    border-radius: 50%;
+    margin: 0 auto 24px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+  }
+  .entry-card h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .entry-card p {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+
+  /* ── BLG ID input ── */
+  .blg-field { width: 100%; margin-bottom: 20px; }
+  .blg-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 8px;
+    text-align: left;
+  }
+  .blg-input-wrap {
+    display: flex;
+    align-items: center;
+    border: 2px solid var(--border);
+    border-radius: var(--r);
+    background: var(--white);
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .blg-input-wrap:focus-within { border-color: var(--gold); }
+  .blg-input-wrap.valid   { border-color: var(--success); }
+  .blg-input-wrap.invalid { border-color: var(--error); }
+  .blg-prefix {
+    background: var(--cream-dk);
+    padding: 0 14px;
+    height: 48px;
+    display: flex; align-items: center;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--navy);
+    border-right: 1px solid var(--border);
+    user-select: none;
+    flex-shrink: 0;
+  }
+  .id-wrap { flex: 1; display: flex; align-items: center; position: relative; }
+  .blg-suffix-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 0 12px;
+    height: 48px;
+    color: var(--navy);
+    letter-spacing: 0.12em;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .blg-suffix-input::placeholder { color: #aaa; font-weight: 400; letter-spacing: 0; }
+  .id-status { width: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .spinner { width: 18px; height: 18px; border: 2px solid var(--cream-dk); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .lookup-result {
+    background: var(--gold-pale);
+    border: 1px solid rgba(201,146,42,0.30);
+    border-radius: var(--r);
+    padding: 14px 16px;
+    text-align: left;
+    margin-top: 12px;
+    display: none;
+  }
+  .lookup-result.show { display: block; }
+  .lookup-result .name { font-weight: 600; font-size: 15px; color: var(--navy); }
+  .lookup-result .meta { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 0 28px; height: 48px;
+    border-radius: var(--r);
+    font-size: 14px; font-weight: 600;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold), #D4A040);
+    color: var(--navy);
+    width: 100%;
+  }
+  .btn-primary:hover { background: linear-gradient(135deg, #D4A040, var(--gold)); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(201,146,42,0.35); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-outline {
+    background: transparent;
+    border: 2px solid var(--gold);
+    color: var(--gold);
+    font-size: 13px;
+    padding: 0 16px;
+    height: 36px;
+  }
+  .btn-outline:hover { background: var(--gold); color: var(--navy); }
+  .btn-sm { height: 34px; padding: 0 16px; font-size: 13px; }
+  .btn-navy { background: var(--navy); color: #fff; }
+  .btn-navy:hover { background: var(--navy-mid); }
+  .btn-ghost { background: transparent; color: var(--text-muted); font-size: 13px; padding: 0 12px; height: 34px; }
+  .btn-ghost:hover { color: var(--navy); background: var(--cream-dk); }
+  .btn-success { background: var(--success); color: #fff; }
+  .btn-success:hover { background: #236040; }
+
+  /* ── Dashboard screens ── */
+  #dashboard-screen { display: none; }
+
+  .dash-header {
+    background: var(--navy);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .dash-leader-info { color: #fff; }
+  .dash-leader-info .role-badge {
+    display: inline-block;
+    background: rgba(201,146,42,0.25);
+    border: 1px solid rgba(201,146,42,0.45);
+    color: var(--gold-light);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+  .dash-leader-info h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    margin-bottom: 2px;
+  }
+  .dash-leader-info .uid-text { color: rgba(255,255,255,0.55); font-size: 13px; }
+  .dash-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+  /* ── Stats row ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 20px 16px;
+    text-align: center;
+  }
+  .stat-card .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    color: var(--navy);
+    font-weight: 700;
+    line-height: 1;
+  }
+  .stat-card .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+
+  /* ── Section heading ── */
+  .section-heading {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .section-heading h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--navy);
+  }
+
+  /* ── Partner Pastor cards ── */
+  .pp-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+
+  .pp-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .pp-card-header {
+    padding: 16px 20px;
+    display: flex; align-items: center; gap: 16px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .pp-card-header:hover { background: var(--cream); }
+  .pp-avatar {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, var(--navy-light), var(--navy));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold-light);
+    font-weight: 700;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .pp-info { flex: 1; }
+  .pp-info .pp-name { font-weight: 600; font-size: 15px; color: var(--navy); }
+  .pp-info .pp-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .pp-right { display: flex; align-items: center; gap: 12px; }
+  .group-count-badge {
+    background: var(--cream-dk);
+    border: 1px solid var(--border);
+    color: var(--navy);
+    font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px;
+  }
+  .chevron { color: var(--text-muted); transition: transform 0.2s; font-size: 14px; }
+  .pp-card.expanded .chevron { transform: rotate(180deg); }
+
+  .pp-groups {
+    display: none;
+    border-top: 1px solid var(--border);
+    background: var(--cream);
+    padding: 16px 20px;
+  }
+  .pp-card.expanded .pp-groups { display: block; }
+
+  /* ── Group rows ── */
+  .group-list { display: flex; flex-direction: column; gap: 10px; }
+  .group-row {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .group-dot { width: 10px; height: 10px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
+  .group-info { flex: 1; }
+  .group-info .g-name { font-weight: 600; font-size: 14px; color: var(--navy); }
+  .group-info .g-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .group-actions { display: flex; gap: 8px; }
+
+  /* ── Check-in modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(10,20,45,0.70);
+    z-index: 500;
+    align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 32px 28px;
+    width: 100%; max-width: 440px;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+  }
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .modal-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .modal-close {
+    position: absolute; top: 16px; right: 16px;
+    background: none; border: none; cursor: pointer;
+    color: var(--text-muted); font-size: 20px; line-height: 1;
+    padding: 4px;
+  }
+  .modal-close:hover { color: var(--navy); }
+
+  .form-row { margin-bottom: 18px; }
+  .form-row label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--navy); margin-bottom: 7px; }
+  .form-input {
+    width: 100%; padding: 0 14px; height: 44px;
+    border: 2px solid var(--border); border-radius: var(--r);
+    font-size: 14px; font-family: 'DM Sans', sans-serif;
+    color: var(--text); background: var(--white);
+    outline: none; transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: var(--gold); }
+  .form-select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M0 0l6 7 6-7z' fill='%235A6070'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 24px; }
+  .modal-actions .btn { flex: 1; }
+
+  /* ── Assign Hub Pastor modal ── */
+  #assign-hp-modal .assign-result {
+    background: var(--gold-pale);
+    border: 1px solid rgba(201,146,42,0.30);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-top: 10px;
+    display: none;
+  }
+  #assign-hp-modal .assign-result.show { display: block; }
+  #assign-hp-modal .assign-result .name { font-weight: 600; color: var(--navy); font-size: 14px; }
+  #assign-hp-modal .assign-result .meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ── Report modal ── */
+  #report-modal .report-table-wrap { max-height: 280px; overflow-y: auto; margin-top: 8px; }
+  .report-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .report-table th {
+    background: var(--navy); color: #fff;
+    text-align: left; padding: 8px 12px;
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+    position: sticky; top: 0;
+  }
+  .report-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--text); }
+  .report-table tr:last-child td { border-bottom: none; }
+  .report-table tr:hover td { background: var(--cream); }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+    background: var(--navy); color: #fff;
+    padding: 12px 24px; border-radius: 8px;
+    font-size: 14px; font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s;
+    z-index: 1000; white-space: nowrap;
+  }
+  #toast.show { opacity: 1; }
+  #toast.success { background: var(--success); }
+  #toast.error   { background: var(--error); }
+
+  /* ── Empty state ── */
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+  .empty-state svg { opacity: 0.3; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* ── Loading ── */
+  .loading-wrap { text-align: center; padding: 60px 20px; }
+  .big-spinner { width: 40px; height: 40px; border: 3px solid var(--cream-dk); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+  .loading-wrap p { color: var(--text-muted); font-size: 14px; }
+
+  /* ── Assign HP section for PP dashboard ── */
+  .assign-hp-section {
+    background: var(--gold-pale);
+    border: 1px solid rgba(201,146,42,0.25);
+    border-radius: var(--r);
+    padding: 20px;
+    margin-bottom: 28px;
+  }
+  .assign-hp-section h4 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .assign-hp-section p { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; }
+  .current-hp-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--navy); color: var(--gold-light);
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    .entry-card { padding: 32px 20px; }
+    .dash-header { padding: 20px 16px; }
+    main { padding: 24px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="site-header">
+  <a href="index.html" class="logo">
+    <div class="logo-mark">B</div>
+    <span class="logo-text">BLG <span>Globe</span></span>
+  </a>
+  <span class="portal-badge">Hub Portal</span>
+</header>
+
+<!-- ENTRY SCREEN -->
+<main>
+<div id="entry-screen">
+  <div class="entry-card">
+    <div class="entry-icon">🌍</div>
+    <h1>Leader Portal</h1>
+    <p>Enter your BLG Leader ID to access your dashboard, manage your network, and submit weekly attendance.</p>
+
+    <div class="blg-field">
+      <label for="entry-suffix">Your BLG Leader ID</label>
+      <div class="blg-input-wrap" id="entry-wrap">
+        <span class="blg-prefix">BLG-</span>
+        <div class="id-wrap">
+          <input type="text" class="blg-suffix-input" id="entry-suffix"
+            placeholder="00001" maxlength="5"
+            inputmode="numeric" pattern="[0-9]*"
+            oninput="onEntryInput(this)"
+            autocomplete="off">
+          <span class="id-status" id="entry-icon"></span>
+        </div>
+      </div>
+      <div class="lookup-result" id="entry-result">
+        <div class="name" id="entry-name"></div>
+        <div class="meta" id="entry-meta"></div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="enter-btn" onclick="enterPortal()" disabled>
+      Enter Portal →
+    </button>
+  </div>
+</div>
+
+<!-- DASHBOARD SCREEN -->
+<div id="dashboard-screen">
+  <!-- Header bar -->
+  <div class="dash-header">
+    <div class="dash-leader-info">
+      <div class="role-badge" id="dash-role-badge">Hub Pastor</div>
+      <h2 id="dash-leader-name">Loading...</h2>
+      <div class="uid-text" id="dash-leader-uid"></div>
+    </div>
+    <div class="dash-actions">
+      <button class="btn btn-outline btn-sm" onclick="openReportModal()">📊 Run Report</button>
+      <button class="btn btn-ghost btn-sm" onclick="signOut()">← Exit</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row" id="stats-row">
+    <div class="stat-card">
+      <div class="stat-num" id="stat-pp">—</div>
+      <div class="stat-label">Partner Pastors</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-groups">—</div>
+      <div class="stat-label">BLG Groups</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-checkins">—</div>
+      <div class="stat-label">Check-ins This Week</div>
+    </div>
+  </div>
+
+  <!-- Assign Hub Pastor section (Partner Pastor only) -->
+  <div class="assign-hp-section" id="assign-hp-section" style="display:none">
+    <h4>Your Hub Pastor</h4>
+    <p>Assign yourself to a Hub Pastor to join their network. You can change this at any time.</p>
+    <div id="current-hp-display"></div>
+    <button class="btn btn-outline btn-sm" onclick="openAssignHPModal()">
+      ✏️ Assign / Change Hub Pastor
+    </button>
+  </div>
+
+  <!-- Partner Pastors list (Hub Pastor view) -->
+  <div id="hp-view" style="display:none">
+    <div class="section-heading">
+      <h3>Partner Pastors</h3>
+    </div>
+    <div class="pp-list" id="pp-list">
+      <div class="loading-wrap"><div class="big-spinner"></div><p>Loading network...</p></div>
+    </div>
+  </div>
+
+  <!-- My Groups list (Partner Pastor view) -->
+  <div id="pp-view" style="display:none">
+    <div class="section-heading">
+      <h3>My BLG Groups</h3>
+    </div>
+    <div class="group-list" id="my-groups-list">
+      <div class="loading-wrap"><div class="big-spinner"></div><p>Loading groups...</p></div>
+    </div>
+  </div>
+</div>
+</main>
+
+<!-- CHECK-IN MODAL -->
+<div class="modal-overlay" id="checkin-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('checkin-modal')">✕</button>
+    <div class="modal-title">Weekly Check-In</div>
+    <div class="modal-sub" id="checkin-group-name">Group Name</div>
+    <input type="hidden" id="checkin-group-uid">
+    <div class="form-row">
+      <label>Date of Meeting</label>
+      <input type="date" class="form-input" id="checkin-date">
+    </div>
+    <div class="form-row">
+      <label>Number of Attendees</label>
+      <input type="number" class="form-input" id="checkin-count" min="1" placeholder="e.g. 8">
+    </div>
+    <div class="form-row">
+      <label>Notes (Optional)</label>
+      <input type="text" class="form-input" id="checkin-notes" placeholder="Any updates or prayer requests">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('checkin-modal')">Cancel</button>
+      <button class="btn btn-success" onclick="submitCheckin()">Submit ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ASSIGN HUB PASTOR MODAL -->
+<div class="modal-overlay" id="assign-hp-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('assign-hp-modal')">✕</button>
+    <div class="modal-title">Assign Hub Pastor</div>
+    <div class="modal-sub">Enter your Hub Pastor's BLG ID to link yourself to their network.</div>
+    <div class="blg-field">
+      <label for="hp-assign-suffix">Hub Pastor BLG ID</label>
+      <div class="blg-input-wrap" id="hp-assign-wrap">
+        <span class="blg-prefix">BLG-</span>
+        <div class="id-wrap">
+          <input type="text" class="blg-suffix-input" id="hp-assign-suffix"
+            placeholder="00001" maxlength="5"
+            inputmode="numeric" pattern="[0-9]*"
+            oninput="onHPAssignInput(this)"
+            autocomplete="off">
+          <span class="id-status" id="hp-assign-icon"></span>
+        </div>
+      </div>
+      <div class="assign-result" id="hp-assign-result">
+        <div class="name" id="hp-assign-name"></div>
+        <div class="meta" id="hp-assign-meta"></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('assign-hp-modal')">Cancel</button>
+      <button class="btn btn-primary" id="confirm-assign-btn" onclick="confirmAssignHP()" disabled>Confirm Assignment</button>
+    </div>
+  </div>
+</div>
+
+<!-- REPORT MODAL -->
+<div class="modal-overlay" id="report-modal">
+  <div class="modal" style="max-width:580px">
+    <button class="modal-close" onclick="closeModal('report-modal')">✕</button>
+    <div class="modal-title">Check-In Report</div>
+    <div class="modal-sub">Showing attendance for all groups in your network.</div>
+    <div style="display:flex;gap:10px;margin-bottom:16px">
+      <div class="form-row" style="flex:1;margin:0">
+        <label>From</label>
+        <input type="date" class="form-input" id="report-start">
+      </div>
+      <div class="form-row" style="flex:1;margin:0">
+        <label>To</label>
+        <input type="date" class="form-input" id="report-end">
+      </div>
+    </div>
+    <button class="btn btn-navy btn-sm" style="margin-bottom:16px" onclick="runReport()">Run Report</button>
+    <div class="report-table-wrap" id="report-results">
+      <div class="empty-state"><p>Select a date range and click Run Report.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbxmSUtTk50by7M-Y3-RuTrRlnUjw42UwsFDm2PavJmmsp9cbDoh2_qdVLL7IvpFjisB9A/exec';
+
+let currentLeader = null;
+let verifiedHPAssign = null;
+let hpAssignTimer = null;
+let entryTimer = null;
+
+// ── Entry screen ──────────────────────────────────────────────────
+function onEntryInput(input) {
+  input.value = input.value.replace(/[^0-9]/g, '').slice(0, 5);
+  clearTimeout(entryTimer);
+  const wrap = document.getElementById('entry-wrap');
+  const icon = document.getElementById('entry-icon');
+  const result = document.getElementById('entry-result');
+  const btn = document.getElementById('enter-btn');
+  wrap.classList.remove('valid','invalid');
+  icon.innerHTML = '';
+  result.classList.remove('show');
+  btn.disabled = true;
+  currentLeader = null;
+  if (input.value.length < 5) return;
+  icon.innerHTML = '<div class="spinner"></div>';
+  const uid = 'BLG-' + input.value.padStart(5,'0');
+  entryTimer = setTimeout(() => lookupEntryLeader(uid), 500);
+}
+
+async function lookupEntryLeader(uid) {
+  const wrap = document.getElementById('entry-wrap');
+  const icon = document.getElementById('entry-icon');
+  const result = document.getElementById('entry-result');
+  const btn = document.getElementById('enter-btn');
+  try {
+    const data = await apiGet({ type: 'lookupLeader', uid });
+    icon.innerHTML = '';
+    if (data.found) {
+      wrap.classList.add('valid');
+      icon.innerHTML = '<span style="color:var(--success);font-size:18px">✓</span>';
+      document.getElementById('entry-name').textContent = data.firstName + ' ' + data.lastName;
+      document.getElementById('entry-meta').textContent = uid + (data.role ? ' · ' + data.role : '');
+      result.classList.add('show');
+      currentLeader = data;
+      currentLeader.uid = uid;
+      btn.disabled = false;
+    } else {
+      wrap.classList.add('invalid');
+      icon.innerHTML = '<span style="color:var(--error);font-size:18px">✗</span>';
+      document.getElementById('entry-name').textContent = 'Leader not found';
+      document.getElementById('entry-meta').textContent = uid + ' does not match any registered leader.';
+      result.classList.add('show');
+    }
+  } catch(e) {
+    icon.innerHTML = '';
+    showToast('Connection error — please try again.', 'error');
+  }
+}
+
+function enterPortal() {
+  if (!currentLeader) return;
+  document.getElementById('entry-screen').style.display = 'none';
+  document.getElementById('dashboard-screen').style.display = 'block';
+  loadDashboard();
+}
+
+function signOut() {
+  currentLeader = null;
+  document.getElementById('dashboard-screen').style.display = 'none';
+  document.getElementById('entry-screen').style.display = 'flex';
+  document.getElementById('entry-suffix').value = '';
+  document.getElementById('entry-wrap').classList.remove('valid','invalid');
+  document.getElementById('entry-icon').innerHTML = '';
+  document.getElementById('entry-result').classList.remove('show');
+  document.getElementById('enter-btn').disabled = true;
+}
+
+// ── Dashboard ──────────────────────────────────────────────────────
+async function loadDashboard() {
+  const role = currentLeader.role || 'Partner Pastor';
+  document.getElementById('dash-leader-name').textContent = currentLeader.firstName + ' ' + currentLeader.lastName;
+  document.getElementById('dash-leader-uid').textContent = currentLeader.uid;
+  document.getElementById('dash-role-badge').textContent = role;
+
+  if (role === 'Hub Pastor') {
+    document.getElementById('hp-view').style.display = 'block';
+    document.getElementById('pp-view').style.display = 'none';
+    document.getElementById('assign-hp-section').style.display = 'none';
+    loadHPDashboard();
+  } else {
+    document.getElementById('pp-view').style.display = 'block';
+    document.getElementById('hp-view').style.display = 'none';
+    document.getElementById('assign-hp-section').style.display = 'block';
+    loadPPDashboard();
+  }
+}
+
+async function loadHPDashboard() {
+  try {
+    const data = await apiGet({ type: 'getHierarchy', uid: currentLeader.uid });
+    const ppList = data.partnerPastors || [];
+    document.getElementById('stat-pp').textContent = ppList.length;
+    let totalGroups = 0;
+    let totalCheckins = 0;
+    ppList.forEach(pp => {
+      totalGroups += (pp.groups || []).length;
+      totalCheckins += (pp.groups || []).reduce((s, g) => s + (g.checkinsThisWeek || 0), 0);
+    });
+    document.getElementById('stat-groups').textContent = totalGroups;
+    document.getElementById('stat-checkins').textContent = totalCheckins;
+    renderPPList(ppList);
+  } catch(e) {
+    document.getElementById('pp-list').innerHTML = '<div class="empty-state"><p>Could not load network. Please try again.</p></div>';
+  }
+}
+
+function renderPPList(ppList) {
+  const container = document.getElementById('pp-list');
+  if (!ppList.length) {
+    container.innerHTML = '<div class="empty-state"><p>No Partner Pastors found in your network yet.</p></div>';
+    return;
+  }
+  container.innerHTML = ppList.map((pp, i) => {
+    const initials = (pp.firstName || '?')[0] + (pp.lastName || '?')[0];
+    const groups = pp.groups || [];
+    return `
+      <div class="pp-card" id="pp-card-${i}">
+        <div class="pp-card-header" onclick="togglePP(${i})">
+          <div class="pp-avatar">${initials}</div>
+          <div class="pp-info">
+            <div class="pp-name">${pp.firstName} ${pp.lastName}</div>
+            <div class="pp-meta">${pp.uid} · ${pp.city || ''}${pp.country ? ', '+pp.country : ''}</div>
+          </div>
+          <div class="pp-right">
+            <span class="group-count-badge">${groups.length} group${groups.length !== 1 ? 's' : ''}</span>
+            <span class="chevron">▾</span>
+          </div>
+        </div>
+        <div class="pp-groups">
+          ${groups.length ? `
+            <div class="group-list">
+              ${groups.map(g => `
+                <div class="group-row">
+                  <div class="group-dot"></div>
+                  <div class="group-info">
+                    <div class="g-name">${g.name || g.uid}</div>
+                    <div class="g-meta">${g.uid} · ${g.city || ''}${g.country ? ', '+g.country : ''}</div>
+                  </div>
+                  <div class="group-actions">
+                    <button class="btn btn-outline btn-sm" onclick="openCheckin('${g.uid}','${(g.name||g.uid).replace(/'/g,"\\'")}')">Check In</button>
+                  </div>
+                </div>`).join('')}
+            </div>` : '<div class="empty-state" style="padding:16px"><p>No groups assigned yet.</p></div>'}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function togglePP(i) {
+  const card = document.getElementById('pp-card-' + i);
+  card.classList.toggle('expanded');
+}
+
+async function loadPPDashboard() {
+  try {
+    const data = await apiGet({ type: 'getHierarchy', uid: currentLeader.uid });
+    const groups = data.groups || [];
+    document.getElementById('stat-pp').parentElement.style.display = 'none';
+    document.getElementById('stat-groups').textContent = groups.length;
+    const totalCI = groups.reduce((s, g) => s + (g.checkinsThisWeek || 0), 0);
+    document.getElementById('stat-checkins').textContent = totalCI;
+    renderMyGroups(groups);
+
+    // Show current Hub Pastor
+    const hpDisplay = document.getElementById('current-hp-display');
+    if (data.hubPastor) {
+      hpDisplay.innerHTML = `<div class="current-hp-tag">🔗 ${data.hubPastor.firstName} ${data.hubPastor.lastName} (${data.hubPastor.uid})</div><br>`;
+    } else {
+      hpDisplay.innerHTML = '<p style="color:var(--error);font-size:13px;margin-bottom:10px">⚠ Not yet assigned to a Hub Pastor.</p>';
+    }
+  } catch(e) {
+    document.getElementById('my-groups-list').innerHTML = '<div class="empty-state"><p>Could not load groups. Please try again.</p></div>';
+  }
+}
+
+function renderMyGroups(groups) {
+  const container = document.getElementById('my-groups-list');
+  if (!groups.length) {
+    container.innerHTML = '<div class="empty-state"><p>No BLG groups found under your leadership yet.</p></div>';
+    return;
+  }
+  container.innerHTML = `<div class="group-list">${groups.map(g => `
+    <div class="group-row">
+      <div class="group-dot"></div>
+      <div class="group-info">
+        <div class="g-name">${g.name || g.uid}</div>
+        <div class="g-meta">${g.uid} · ${g.city || ''}${g.country ? ', '+g.country : ''}</div>
+      </div>
+      <div class="group-actions">
+        <button class="btn btn-outline btn-sm" onclick="openCheckin('${g.uid}','${(g.name||g.uid).replace(/'/g,"\\'")}')">Check In</button>
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+// ── Check-in modal ────────────────────────────────────────────────
+function openCheckin(groupUID, groupName) {
+  document.getElementById('checkin-group-uid').value = groupUID;
+  document.getElementById('checkin-group-name').textContent = groupName;
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('checkin-date').value = today;
+  document.getElementById('checkin-count').value = '';
+  document.getElementById('checkin-notes').value = '';
+  openModal('checkin-modal');
+}
+
+async function submitCheckin() {
+  const groupUID = document.getElementById('checkin-group-uid').value;
+  const date = document.getElementById('checkin-date').value;
+  const count = document.getElementById('checkin-count').value;
+  const notes = document.getElementById('checkin-notes').value;
+  if (!date || !count) { showToast('Please fill in date and attendee count.', 'error'); return; }
+  const btn = document.querySelector('#checkin-modal .btn-success');
+  btn.disabled = true; btn.textContent = 'Submitting...';
+  try {
+    const data = await apiPost({ type: 'checkin', groupUID, leaderUID: currentLeader.uid, date, attendees: parseInt(count), notes });
+    if (data.success) {
+      showToast('Check-in submitted!', 'success');
+      closeModal('checkin-modal');
+    } else {
+      showToast(data.message || 'Submission failed.', 'error');
+    }
+  } catch(e) {
+    showToast('Connection error. Please try again.', 'error');
+  }
+  btn.disabled = false; btn.textContent = 'Submit ✓';
+}
+
+// ── Assign Hub Pastor modal ───────────────────────────────────────
+function openAssignHPModal() {
+  verifiedHPAssign = null;
+  document.getElementById('hp-assign-suffix').value = '';
+  document.getElementById('hp-assign-wrap').classList.remove('valid','invalid');
+  document.getElementById('hp-assign-icon').innerHTML = '';
+  document.getElementById('hp-assign-result').classList.remove('show');
+  document.getElementById('confirm-assign-btn').disabled = true;
+  openModal('assign-hp-modal');
+}
+
+function onHPAssignInput(input) {
+  input.value = input.value.replace(/[^0-9]/g, '').slice(0, 5);
+  clearTimeout(hpAssignTimer);
+  verifiedHPAssign = null;
+  const wrap = document.getElementById('hp-assign-wrap');
+  const icon = document.getElementById('hp-assign-icon');
+  const result = document.getElementById('hp-assign-result');
+  const btn = document.getElementById('confirm-assign-btn');
+  wrap.classList.remove('valid','invalid');
+  icon.innerHTML = '';
+  result.classList.remove('show');
+  btn.disabled = true;
+  if (input.value.length < 5) return;
+  icon.innerHTML = '<div class="spinner"></div>';
+  const uid = 'BLG-' + input.value.padStart(5,'0');
+  hpAssignTimer = setTimeout(() => lookupHPAssign(uid), 500);
+}
+
+async function lookupHPAssign(uid) {
+  const wrap = document.getElementById('hp-assign-wrap');
+  const icon = document.getElementById('hp-assign-icon');
+  const result = document.getElementById('hp-assign-result');
+  const btn = document.getElementById('confirm-assign-btn');
+  try {
+    const data = await apiGet({ type: 'lookupLeader', uid });
+    icon.innerHTML = '';
+    if (data.found) {
+      const isHubPastor = (data.role || '').toLowerCase().includes('hub');
+      if (!isHubPastor) {
+        wrap.classList.add('invalid');
+        icon.innerHTML = '<span style="color:var(--error);font-size:18px">✗</span>';
+        document.getElementById('hp-assign-name').textContent = data.firstName + ' ' + data.lastName + ' — not a Hub Pastor';
+        document.getElementById('hp-assign-meta').textContent = 'This leader does not have a Hub Pastor role.';
+        result.classList.add('show');
+        return;
+      }
+      wrap.classList.add('valid');
+      icon.innerHTML = '<span style="color:var(--success);font-size:18px">✓</span>';
+      document.getElementById('hp-assign-name').textContent = data.firstName + ' ' + data.lastName;
+      document.getElementById('hp-assign-meta').textContent = uid + ' · Hub Pastor';
+      result.classList.add('show');
+      verifiedHPAssign = { uid, ...data };
+      btn.disabled = false;
+    } else {
+      wrap.classList.add('invalid');
+      icon.innerHTML = '<span style="color:var(--error);font-size:18px">✗</span>';
+      document.getElementById('hp-assign-name').textContent = 'Leader not found';
+      document.getElementById('hp-assign-meta').textContent = uid + ' does not match any registered leader.';
+      result.classList.add('show');
+    }
+  } catch(e) { icon.innerHTML = ''; showToast('Connection error.', 'error'); }
+}
+
+async function confirmAssignHP() {
+  if (!verifiedHPAssign) return;
+  const btn = document.getElementById('confirm-assign-btn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+  try {
+    const data = await apiPost({
+      type: 'assignReportsTo',
+      leaderUID: currentLeader.uid,
+      supervisorUID: verifiedHPAssign.uid
+    });
+    if (data.success) {
+      showToast('Hub Pastor assigned!', 'success');
+      closeModal('assign-hp-modal');
+      currentLeader.reportsTo = verifiedHPAssign.uid;
+      loadPPDashboard();
+    } else {
+      showToast(data.message || 'Assignment failed.', 'error');
+    }
+  } catch(e) { showToast('Connection error.', 'error'); }
+  btn.disabled = false; btn.textContent = 'Confirm Assignment';
+}
+
+// ── Report modal ──────────────────────────────────────────────────
+function openReportModal() {
+  const today = new Date();
+  const weekAgo = new Date(today.getTime() - 7*24*60*60*1000);
+  document.getElementById('report-end').value = today.toISOString().split('T')[0];
+  document.getElementById('report-start').value = weekAgo.toISOString().split('T')[0];
+  document.getElementById('report-results').innerHTML = '<div class="empty-state"><p>Select a date range and click Run Report.</p></div>';
+  openModal('report-modal');
+}
+
+async function runReport() {
+  const start = document.getElementById('report-start').value;
+  const end = document.getElementById('report-end').value;
+  if (!start || !end) { showToast('Please select a date range.', 'error'); return; }
+  const container = document.getElementById('report-results');
+  container.innerHTML = '<div class="loading-wrap"><div class="big-spinner" style="width:28px;height:28px;border-width:2px"></div></div>';
+  try {
+    const data = await apiGet({ type: 'getCheckinReport', uid: currentLeader.uid, startDate: start, endDate: end });
+    const rows = data.rows || [];
+    if (!rows.length) {
+      container.innerHTML = '<div class="empty-state"><p>No check-ins found in this date range.</p></div>';
+      return;
+    }
+    container.innerHTML = `<table class="report-table">
+      <thead><tr><th>Date</th><th>Group</th><th>Leader</th><th>Attendees</th></tr></thead>
+      <tbody>${rows.map(r => `
+        <tr>
+          <td>${r.date || ''}</td>
+          <td>${r.groupName || r.groupUID || ''}</td>
+          <td>${r.leaderName || r.leaderUID || ''}</td>
+          <td style="text-align:center;font-weight:600">${r.attendees || ''}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+  } catch(e) { container.innerHTML = '<div class="empty-state"><p>Error loading report. Please try again.</p></div>'; }
+}
+
+// ── Utilities ─────────────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (type ? ' ' + type : '');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.className = ''; }, 3200);
+}
+
+async function apiGet(params) {
+  const qs = Object.entries(params).map(([k,v]) => encodeURIComponent(k)+'='+encodeURIComponent(v)).join('&');
+  const res = await fetch(API + '?' + qs);
+  return res.json();
+}
+
+async function apiPost(body) {
+  const res = await fetch(API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  return res.json();
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>
