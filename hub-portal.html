@@ -1035,18 +1035,17 @@ async function submitCheckin() {
   const payload = {
     type:           'checkin',
     uid:            groupUID,
-    leaderUID:      session.uid,
-    met:            ciMet ? 'Yes' : 'No',
+    met:            ciMet,
     date:           date,
     count:          ciMet ? count : 0,
     week:           date ? getWeekKey(date) : '',
-    newPeople:      ciNew  === true ? 'Yes' : (ciNew  === false ? 'No' : ''),
+    newPeople:      ciNew,
     newPeopleCount: ciNew  ? (parseInt(document.getElementById('checkin-new-count').value) || 0) : 0,
-    decision:       ciDec  === true ? 'Yes' : (ciDec  === false ? 'No' : ''),
+    decision:       ciDec,
     decisionNotes:  ciDec  ? document.getElementById('checkin-dec-notes').value : '',
-    testimony:      ciTest === true ? 'Yes' : (ciTest === false ? 'No' : ''),
+    testimony:      ciTest,
     testimonyNotes: ciTest ? document.getElementById('checkin-test-notes').value : '',
-    multiplied:     ciMul  === true ? 'Yes' : (ciMul  === false ? 'No' : ''),
+    multiplied:     ciMul,
     newLeaderName:  ciMul  ? document.getElementById('checkin-mul-leader').value : ''
   };
 
