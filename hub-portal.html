@@ -1035,31 +1035,38 @@ async function submitCheckin() {
   const payload = {
     type:           'checkin',
     uid:            groupUID,
-    met:            ciMet,
+    met:            ciMet ? 'YES' : 'NO',
     date:           date,
     count:          ciMet ? count : 0,
     week:           date ? getWeekKey(date) : '',
-    newPeople:      ciNew,
+    newPeople:      ciMet ? (ciNew  === true ? 'YES' : 'NO') : 'NO',
     newPeopleCount: ciNew  ? (parseInt(document.getElementById('checkin-new-count').value) || 0) : 0,
-    decision:       ciDec,
+    decision:       ciMet ? (ciDec  === true ? 'YES' : 'NO') : 'NO',
     decisionNotes:  ciDec  ? document.getElementById('checkin-dec-notes').value : '',
-    testimony:      ciTest,
+    testimony:      ciMet ? (ciTest === true ? 'YES' : 'NO') : 'NO',
     testimonyNotes: ciTest ? document.getElementById('checkin-test-notes').value : '',
-    multiplied:     ciMul,
+    multiplied:     ciMet ? (ciMul  === true ? 'YES' : 'NO') : 'NO',
     newLeaderName:  ciMul  ? document.getElementById('checkin-mul-leader').value : ''
   };
 
   const btn = document.getElementById('checkin-submit-btn');
   btn.disabled = true; btn.textContent = 'Submitting…';
   try {
-    const data = await apiPost(payload);
+    const res = await fetch(API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } catch(e) {
+      showToast('Server error: ' + text.substring(0, 120), 'error');
+      btn.disabled = false; btn.textContent = 'Submit ✓';
+      return;
+    }
     if (data.success) {
       showToast('Check-in submitted!', 'success');
       closeModal('checkin-modal');
     } else {
       showToast(data.message || 'Submission failed.', 'error');
     }
-  } catch(e) { showToast('Connection error. Please try again.', 'error'); }
+  } catch(e) { showToast('Network error: ' + e.message, 'error'); }
   btn.disabled = false; btn.textContent = 'Submit ✓';
 }
 
