@@ -164,13 +164,12 @@ function getGroupsForLeader_(leaderUID, groupsData) {
     var groupUID = String(grow[G_UID - 1]).trim();
 
     // Count this-week check-ins for this group
+    // Checkins: A=Group UID, B=Attendees, C=Meeting Date, D=Week, E=Submitted At
     var weekCount = 0;
     for (var c = 1; c < checkinsData.length; c++) {
       var crow = checkinsData[c];
-      // Checkins sheet: assumed col 1=groupUID, col 2=date (or similar)
-      // Adjust column indices to match your actual Checkins sheet layout
       if (String(crow[0]).trim() === groupUID) {
-        var ciDate = new Date(crow[1]);
+        var ciDate = new Date(crow[2]); // col C = Meeting Date
         if (!isNaN(ciDate.getTime()) && ciDate >= weekStart) weekCount++;
       }
     }
@@ -254,30 +253,36 @@ function handleGetCheckinReport_(uid, startDate, endDate) {
   }
 
   // Filter check-ins
-  // Checkins sheet assumed layout (adjust column indices to your actual sheet):
-  //   Col 1: Checkin UID / row ID
-  //   Col 2: Group UID
-  //   Col 3: Leader UID
-  //   Col 4: Date
-  //   Col 5: Attendees
-  //   Col 6: Notes
+  // Checkins sheet actual layout (confirmed from sheet):
+  //   Col 0 (A): Group UID
+  //   Col 1 (B): Attendee Count
+  //   Col 2 (C): Meeting Date
+  //   Col 3 (D): Week
+  //   Col 4 (E): Submitted At
   var rows = [];
   for (var c = 1; c < checkinsData.length; c++) {
     var crow   = checkinsData[c];
-    var cGroup = String(crow[1] || '').trim(); // col 2 = Group UID
-    var cDate  = new Date(crow[3]);            // col 4 = Date
+    var cGroup = String(crow[0] || '').trim(); // col A = Group UID
+    var cDate  = new Date(crow[2]);            // col C = Meeting Date
     if (!groupUIDs.hasOwnProperty(cGroup)) continue;
     if (isNaN(cDate.getTime())) continue;
     if (cDate < start || cDate > end) continue;
-    var cLeader = String(crow[2] || '').trim(); // col 3 = Leader UID
+    // Look up current leader for this group from groupsData
+    var cLeaderUID = '';
+    for (var g = 1; g < groupsData.length; g++) {
+      if (String(groupsData[g][G_UID - 1]).trim() === cGroup) {
+        cLeaderUID = String(groupsData[g][G_LEADER - 1] || '').trim();
+        break;
+      }
+    }
     rows.push({
       date:       Utilities.formatDate(cDate, Session.getScriptTimeZone(), 'yyyy-MM-dd'),
       groupUID:   cGroup,
       groupName:  groupNames[cGroup] || cGroup,
-      leaderUID:  cLeader,
-      leaderName: leaderNames[cLeader] || cLeader,
-      attendees:  crow[4] || 0,
-      notes:      crow[5] || ''
+      leaderUID:  cLeaderUID,
+      leaderName: leaderNames[cLeaderUID] || cLeaderUID,
+      attendees:  crow[1] || 0,
+      week:       crow[3] || ''
     });
   }
 

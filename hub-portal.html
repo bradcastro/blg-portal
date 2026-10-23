@@ -190,6 +190,13 @@
   .assign-result .ar-name { font-weight: 600; color: var(--navy); font-size: 14px; }
   .assign-result .ar-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
+  /* Yes/No toggle buttons */
+  .yn-btns { display: flex; gap: 8px; }
+  .yn-btn { flex: 1; height: 40px; border: 2px solid var(--border); border-radius: var(--r); background: var(--white); font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; transition: all 0.15s; font-family: 'DM Sans', sans-serif; }
+  .yn-btn.active-yes { border-color: var(--success); background: var(--success); color: #fff; }
+  .yn-btn.active-no  { border-color: var(--error);   background: var(--error);   color: #fff; }
+  .yn-btn:hover:not(.active-yes):not(.active-no) { border-color: var(--navy); color: var(--navy); }
+
   @media (max-width: 600px) {
     .entry-card { padding: 28px 18px; }
     .dash-header { padding: 18px 14px; }
@@ -322,14 +329,73 @@
 
 <!-- Check-in -->
 <div class="modal-overlay" id="checkin-modal">
-  <div class="modal">
+  <div class="modal" style="max-width:500px;max-height:90vh;overflow-y:auto">
     <button class="modal-close" onclick="closeModal('checkin-modal')">✕</button>
     <div class="modal-title">Weekly Check-In</div>
     <div class="modal-sub" id="checkin-group-label">Group</div>
     <input type="hidden" id="checkin-group-uid">
-    <div class="form-row"><label>Date of Meeting</label><input type="date" class="form-input" id="checkin-date"></div>
-    <div class="form-row"><label>Number of Attendees</label><input type="number" class="form-input" id="checkin-count" min="1" placeholder="e.g. 8"></div>
-    <div class="form-row"><label>Notes (Optional)</label><input type="text" class="form-input" id="checkin-notes" placeholder="Updates, prayer requests…"></div>
+
+    <div class="form-row">
+      <label>Did the group meet this week?</label>
+      <div class="yn-btns">
+        <button class="yn-btn" id="ci-met-yes" onclick="setCiMet(true)">Yes</button>
+        <button class="yn-btn" id="ci-met-no"  onclick="setCiMet(false)">No</button>
+      </div>
+    </div>
+
+    <div id="ci-met-fields" style="display:none">
+      <div class="form-row"><label>Date of Meeting</label><input type="date" class="form-input" id="checkin-date"></div>
+      <div class="form-row"><label>Number of Attendees</label><input type="number" class="form-input" id="checkin-count" min="1" placeholder="e.g. 8"></div>
+
+      <div class="form-row">
+        <label>Were there any new people?</label>
+        <div class="yn-btns">
+          <button class="yn-btn" id="ci-new-yes" onclick="setCiNew(true)">Yes</button>
+          <button class="yn-btn" id="ci-new-no"  onclick="setCiNew(false)">No</button>
+        </div>
+      </div>
+      <div class="form-row" id="ci-new-count-row" style="display:none">
+        <label>How many new people?</label>
+        <input type="number" class="form-input" id="checkin-new-count" min="1" placeholder="e.g. 2">
+      </div>
+
+      <div class="form-row">
+        <label>Did anyone make a decision for Christ?</label>
+        <div class="yn-btns">
+          <button class="yn-btn" id="ci-dec-yes" onclick="setCiDec(true)">Yes</button>
+          <button class="yn-btn" id="ci-dec-no"  onclick="setCiDec(false)">No</button>
+        </div>
+      </div>
+      <div class="form-row" id="ci-dec-notes-row" style="display:none">
+        <label>Decision Notes</label>
+        <input type="text" class="form-input" id="checkin-dec-notes" placeholder="Brief description…">
+      </div>
+
+      <div class="form-row">
+        <label>Was there a testimony worth sharing?</label>
+        <div class="yn-btns">
+          <button class="yn-btn" id="ci-test-yes" onclick="setCiTest(true)">Yes</button>
+          <button class="yn-btn" id="ci-test-no"  onclick="setCiTest(false)">No</button>
+        </div>
+      </div>
+      <div class="form-row" id="ci-test-notes-row" style="display:none">
+        <label>Testimony Notes</label>
+        <input type="text" class="form-input" id="checkin-test-notes" placeholder="Brief description…">
+      </div>
+
+      <div class="form-row">
+        <label>Did the group multiply or create another BLG?</label>
+        <div class="yn-btns">
+          <button class="yn-btn" id="ci-mul-yes" onclick="setCiMul(true)">Yes</button>
+          <button class="yn-btn" id="ci-mul-no"  onclick="setCiMul(false)">No</button>
+        </div>
+      </div>
+      <div class="form-row" id="ci-mul-leader-row" style="display:none">
+        <label>New Leader Name</label>
+        <input type="text" class="form-input" id="checkin-mul-leader" placeholder="New leader's name">
+      </div>
+    </div>
+
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal('checkin-modal')">Cancel</button>
       <button class="btn btn-success" id="checkin-submit-btn" onclick="submitCheckin()">Submit ✓</button>
@@ -591,13 +657,28 @@ function renderDashboard() {
   if (role === 'Hub Pastor') {
     document.getElementById('hp-view').style.display = 'block';
     document.getElementById('pp-view').style.display = 'none';
-    document.getElementById('hp-assign-section').style.display = 'none';
+    document.getElementById('hp-assign-section').style.display = 'block';
+    renderHPAssignSection();
     renderHPView();
   } else {
     document.getElementById('pp-view').style.display = 'block';
     document.getElementById('hp-view').style.display = 'none';
     document.getElementById('hp-assign-section').style.display = 'block';
+    renderHPAssignSection();
     renderPPView();
+  }
+}
+
+// ── Hub Pastor assign section (shared by both roles) ─────────────
+function renderHPAssignSection() {
+  const hpDisplay = document.getElementById('current-hp-display');
+  const hp = localData.hubPastor;
+  if (hp) {
+    hpDisplay.innerHTML = `<div class="current-hp-tag">🔗 ${hp.first} ${hp.last} (${hp.uid})</div><br>`;
+  } else if (session.reportsTo) {
+    hpDisplay.innerHTML = `<div class="current-hp-tag">🔗 ${session.reportsTo}</div><br>`;
+  } else {
+    hpDisplay.innerHTML = '<p style="color:var(--muted);font-size:12px;margin-bottom:10px">Not yet assigned to a Hub Pastor.</p>';
   }
 }
 
@@ -668,17 +749,6 @@ function renderPPView() {
   document.getElementById('stat-groups').textContent = groups.length;
   document.getElementById('stat-total-groups').textContent = groups.length;
   document.getElementById('pp-cloud-note').style.display = 'block';
-
-  // Hub Pastor display
-  const hpDisplay = document.getElementById('current-hp-display');
-  const hp = localData.hubPastor;
-  if (hp) {
-    hpDisplay.innerHTML = `<div class="current-hp-tag">🔗 ${hp.first} ${hp.last} (${hp.uid})</div><br>`;
-  } else if (session.reportsTo) {
-    hpDisplay.innerHTML = `<div class="current-hp-tag">🔗 ${session.reportsTo}</div><br>`;
-  } else {
-    hpDisplay.innerHTML = '<p style="color:var(--error);font-size:12px;margin-bottom:10px">⚠ Not yet assigned to a Hub Pastor.</p>';
-  }
 
   const container = document.getElementById('my-groups-list');
   if (!groups.length) {
@@ -887,30 +957,103 @@ function confirmAssignHP() {
   session.reportsTo = verifiedHP.uid;
   saveLocal(session.uid, localData);
   closeModal('assign-hp-modal');
-  renderPPView();
+  renderHPAssignSection();
+  if (session.role === 'Partner Pastor') renderPPView();
   showToast('Hub Pastor assigned!', 'success');
 }
 
 // ── Check-in ──────────────────────────────────────────────────────
+let ciMet = null, ciNew = null, ciDec = null, ciTest = null, ciMul = null;
+
+function setCiMet(val) {
+  ciMet = val;
+  document.getElementById('ci-met-yes').className = 'yn-btn' + (val === true  ? ' active-yes' : '');
+  document.getElementById('ci-met-no').className  = 'yn-btn' + (val === false ? ' active-no'  : '');
+  document.getElementById('ci-met-fields').style.display = val ? 'block' : 'none';
+}
+function setCiNew(val) {
+  ciNew = val;
+  document.getElementById('ci-new-yes').className = 'yn-btn' + (val === true  ? ' active-yes' : '');
+  document.getElementById('ci-new-no').className  = 'yn-btn' + (val === false ? ' active-no'  : '');
+  document.getElementById('ci-new-count-row').style.display = val ? 'block' : 'none';
+}
+function setCiDec(val) {
+  ciDec = val;
+  document.getElementById('ci-dec-yes').className = 'yn-btn' + (val === true  ? ' active-yes' : '');
+  document.getElementById('ci-dec-no').className  = 'yn-btn' + (val === false ? ' active-no'  : '');
+  document.getElementById('ci-dec-notes-row').style.display = val ? 'block' : 'none';
+}
+function setCiTest(val) {
+  ciTest = val;
+  document.getElementById('ci-test-yes').className = 'yn-btn' + (val === true  ? ' active-yes' : '');
+  document.getElementById('ci-test-no').className  = 'yn-btn' + (val === false ? ' active-no'  : '');
+  document.getElementById('ci-test-notes-row').style.display = val ? 'block' : 'none';
+}
+function setCiMul(val) {
+  ciMul = val;
+  document.getElementById('ci-mul-yes').className = 'yn-btn' + (val === true  ? ' active-yes' : '');
+  document.getElementById('ci-mul-no').className  = 'yn-btn' + (val === false ? ' active-no'  : '');
+  document.getElementById('ci-mul-leader-row').style.display = val ? 'block' : 'none';
+}
+
 function openCheckin(groupUID, groupName) {
+  ciMet = null; ciNew = null; ciDec = null; ciTest = null; ciMul = null;
   document.getElementById('checkin-group-uid').value = groupUID;
   document.getElementById('checkin-group-label').textContent = groupName;
   document.getElementById('checkin-date').value = new Date().toISOString().split('T')[0];
   document.getElementById('checkin-count').value = '';
-  document.getElementById('checkin-notes').value = '';
+  document.getElementById('checkin-new-count').value = '';
+  document.getElementById('checkin-dec-notes').value = '';
+  document.getElementById('checkin-test-notes').value = '';
+  document.getElementById('checkin-mul-leader').value = '';
+  // Reset all toggles
+  ['ci-met-yes','ci-met-no','ci-new-yes','ci-new-no','ci-dec-yes','ci-dec-no','ci-test-yes','ci-test-no','ci-mul-yes','ci-mul-no'].forEach(id => {
+    document.getElementById(id).className = 'yn-btn';
+  });
+  document.getElementById('ci-met-fields').style.display = 'none';
+  ['ci-new-count-row','ci-dec-notes-row','ci-test-notes-row','ci-mul-leader-row'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
   openModal('checkin-modal');
 }
 
+function getWeekKey(dateStr) {
+  const d = new Date(dateStr);
+  const jan1 = new Date(d.getFullYear(), 0, 1);
+  const week = Math.ceil(((d - jan1) / 86400000 + jan1.getDay() + 1) / 7);
+  return d.getFullYear() + '-W' + String(week).padStart(2, '0');
+}
+
 async function submitCheckin() {
+  if (ciMet === null) { showToast('Please answer: Did the group meet?', 'error'); return; }
   const groupUID = document.getElementById('checkin-group-uid').value;
   const date     = document.getElementById('checkin-date').value;
-  const count    = document.getElementById('checkin-count').value;
-  const notes    = document.getElementById('checkin-notes').value;
-  if (!date || !count || parseInt(count) < 1) { showToast('Please enter a date and attendee count.', 'error'); return; }
+  const count    = parseInt(document.getElementById('checkin-count').value) || 0;
+
+  if (ciMet && (!date || count < 1)) { showToast('Please enter the meeting date and attendee count.', 'error'); return; }
+
+  const payload = {
+    type:           'checkin',
+    uid:            groupUID,
+    leaderUID:      session.uid,
+    met:            ciMet ? 'Yes' : 'No',
+    date:           date,
+    count:          ciMet ? count : 0,
+    week:           date ? getWeekKey(date) : '',
+    newPeople:      ciNew  === true ? 'Yes' : (ciNew  === false ? 'No' : ''),
+    newPeopleCount: ciNew  ? (parseInt(document.getElementById('checkin-new-count').value) || 0) : 0,
+    decision:       ciDec  === true ? 'Yes' : (ciDec  === false ? 'No' : ''),
+    decisionNotes:  ciDec  ? document.getElementById('checkin-dec-notes').value : '',
+    testimony:      ciTest === true ? 'Yes' : (ciTest === false ? 'No' : ''),
+    testimonyNotes: ciTest ? document.getElementById('checkin-test-notes').value : '',
+    multiplied:     ciMul  === true ? 'Yes' : (ciMul  === false ? 'No' : ''),
+    newLeaderName:  ciMul  ? document.getElementById('checkin-mul-leader').value : ''
+  };
+
   const btn = document.getElementById('checkin-submit-btn');
   btn.disabled = true; btn.textContent = 'Submitting…';
   try {
-    const data = await apiPost({ type: 'checkin', groupUID, leaderUID: session.uid, date, attendees: parseInt(count), notes });
+    const data = await apiPost(payload);
     if (data.success) {
       showToast('Check-in submitted!', 'success');
       closeModal('checkin-modal');
