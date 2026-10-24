@@ -213,11 +213,23 @@
   .yn-btn.active-no  { border-color: var(--error);   background: var(--error);   color: #fff; }
   .yn-btn:hover:not(.active-yes):not(.active-no) { border-color: var(--navy); color: var(--navy); }
 
+  /* Inline registration section */
+  .reg-section { text-align: left; border-top: 1px solid var(--border); padding-top: 16px; margin-top: 4px; }
+  .reg-section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+  .reg-section > h3 { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--navy); margin-bottom: 4px; }
+  .reg-section > p { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+  .reg-field { margin-bottom: 12px; text-align: left; }
+  .reg-field label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--navy); margin-bottom: 5px; }
+  .reg-input { width: 100%; height: 42px; padding: 0 12px; border: 2px solid var(--border); border-radius: var(--r); font-size: 14px; font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--white); outline: none; transition: border-color 0.2s; }
+  .reg-input:focus { border-color: var(--gold); }
+  .reg-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
   @media (max-width: 600px) {
     .entry-card { padding: 28px 18px; }
     .dash-header { padding: 18px 14px; }
     main { padding: 20px 14px; }
     .role-btns { flex-direction: column; align-items: center; }
+    .reg-grid-2 { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -298,6 +310,86 @@
         </div>
       </div>
       <button class="skip-link" onclick="skipHPAssign()">Skip for now →</button>
+    </div>
+
+    <!-- Group ID offer (shown when entered ID is a group, not a leader) -->
+    <div id="entry-group-banner" style="display:none">
+      <div class="entry-step" style="border-top:1px solid var(--border);padding-top:16px;margin-bottom:0">
+        <div class="entry-step-label">Group Found</div>
+        <h3>🏘 This is a Group ID</h3>
+        <p id="entry-group-desc" style="margin-bottom:12px">This BLG ID matches a group, not a leader account.</p>
+        <button class="btn btn-primary" onclick="showGroupRegForm()" style="margin-bottom:6px">Register as Leader for this Group →</button>
+      </div>
+    </div>
+
+    <!-- Inline registration form (group takeover) -->
+    <div id="entry-reg-form" class="reg-section" style="display:none">
+      <div class="reg-section-label">New Leader Registration</div>
+      <h3 style="margin-bottom:4px">Create Your Leader Account</h3>
+      <p>Your leader ID will be <strong id="reg-leader-id-text" style="color:var(--navy)">BLG-XXXXX</strong>.</p>
+      <div class="reg-grid-2">
+        <div class="reg-field">
+          <label>First Name *</label>
+          <input type="text" class="reg-input" id="reg-first" placeholder="Samuel">
+        </div>
+        <div class="reg-field">
+          <label>Last Name *</label>
+          <input type="text" class="reg-input" id="reg-last" placeholder="Mensah">
+        </div>
+      </div>
+      <div class="reg-field">
+        <label>Email *</label>
+        <input type="email" class="reg-input" id="reg-email" placeholder="your@email.com">
+      </div>
+      <div class="reg-field">
+        <label>WhatsApp Number *</label>
+        <input type="tel" class="reg-input" id="reg-phone" placeholder="+1 (555) 000-0000">
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Include your country code.</div>
+      </div>
+      <div class="reg-grid-2">
+        <div class="reg-field">
+          <label>Country *</label>
+          <input type="text" class="reg-input" id="reg-country" placeholder="Ghana">
+        </div>
+        <div class="reg-field">
+          <label>City *</label>
+          <input type="text" class="reg-input" id="reg-city" placeholder="Accra">
+        </div>
+      </div>
+      <div class="reg-field">
+        <label>Hub Pastor BLG ID <span class="optional-pill">Optional</span></label>
+        <div class="blg-input-wrap" id="reg-hp-wrap">
+          <span class="blg-prefix">BLG-</span>
+          <div class="id-wrap">
+            <input type="text" class="blg-suffix-input" id="reg-hp-suffix"
+              placeholder="00001" maxlength="5" inputmode="numeric" pattern="[0-9]*"
+              oninput="onRegHPInput(this)" autocomplete="off">
+            <span class="id-status" id="reg-hp-icon"></span>
+          </div>
+        </div>
+        <div class="assign-result" id="reg-hp-result">
+          <div class="ar-name" id="reg-hp-name"></div>
+          <div class="ar-meta" id="reg-hp-meta"></div>
+        </div>
+      </div>
+      <div class="reg-field">
+        <label>Partner Pastor BLG ID <span class="optional-pill">Optional</span></label>
+        <div class="blg-input-wrap" id="reg-pp-wrap">
+          <span class="blg-prefix">BLG-</span>
+          <div class="id-wrap">
+            <input type="text" class="blg-suffix-input" id="reg-pp-suffix"
+              placeholder="00001" maxlength="5" inputmode="numeric" pattern="[0-9]*"
+              oninput="onRegPPInput(this)" autocomplete="off">
+            <span class="id-status" id="reg-pp-icon"></span>
+          </div>
+        </div>
+        <div class="assign-result" id="reg-pp-result">
+          <div class="ar-name" id="reg-pp-name"></div>
+          <div class="ar-meta" id="reg-pp-meta"></div>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="reg-submit-btn" onclick="submitGroupLeaderReg()" style="margin-top:4px">Create Leader Account →</button>
+      <button class="skip-link" onclick="cancelGroupReg()">← Cancel</button>
     </div>
 
     <button class="btn btn-primary" id="enter-btn" onclick="enterPortal()" disabled>Enter Portal →</button>
@@ -608,6 +700,13 @@ let entryHP = null;    // hub pastor chosen during login flow
 let ehpTimer = null;
 let verifiedEntryHP = null;
 
+// Group registration flow
+let groupRegUID = null;   // the group/leader UID being taken over
+let regVerifiedHP = null;
+let regVerifiedPP = null;
+let regHPTimer = null;
+let regPPTimer = null;
+
 // ── LocalStorage helpers ──────────────────────────────────────────
 function lsKey(uid)  { return 'blg-hub-' + uid; }
 function loadLocal(uid) {
@@ -640,6 +739,9 @@ function setEntryState(state, data) {
   icon.innerHTML = '';
   result.classList.remove('show');
   btn.disabled = true;
+  // Reset group offer UI
+  document.getElementById('entry-group-banner').style.display = 'none';
+  document.getElementById('entry-reg-form').style.display = 'none';
   if (state === 'loading') {
     icon.innerHTML = '<div class="spinner"></div>';
   } else if (state === 'found') {
@@ -655,6 +757,14 @@ function setEntryState(state, data) {
     document.getElementById('entry-name').textContent = 'Leader not found';
     document.getElementById('entry-meta').textContent = 'No leader found with this BLG ID.';
     result.classList.add('show');
+  } else if (state === 'group-offer') {
+    wrap.classList.add('invalid');
+    icon.innerHTML = '<span style="color:var(--gold);font-size:18px">🏘</span>';
+    const g = data.group;
+    const desc = g.name ? g.name + (g.city ? ' · ' + g.city : '') + (g.country ? ', ' + g.country : '') : data.uid;
+    document.getElementById('entry-group-desc').textContent = desc + ' — This BLG ID matches a group, not a leader account.';
+    groupRegUID = data.uid;
+    document.getElementById('entry-group-banner').style.display = 'block';
   }
 }
 
@@ -675,7 +785,17 @@ async function lookupEntry(uid) {
         document.getElementById('enter-btn').disabled = true;
       }
     } else {
-      setEntryState('notfound');
+      // Not a leader — check if it's a group ID
+      try {
+        const gData = await apiGet({ type: 'lookupGroup', uid });
+        if (gData.found) {
+          setEntryState('group-offer', { uid, group: gData });
+        } else {
+          setEntryState('notfound');
+        }
+      } catch(e2) {
+        setEntryState('notfound');
+      }
     }
   } catch(e) {
     setEntryState('idle');
@@ -792,6 +912,117 @@ function confirmSignOut() {
   closeModal('role-modal');
   signOut();
   showToast('Signed out and local data cleared.');
+}
+
+// ── Group Registration Flow ────────────────────────────────────────
+function showGroupRegForm() {
+  document.getElementById('entry-group-banner').style.display = 'none';
+  document.getElementById('entry-reg-form').style.display = 'block';
+  document.getElementById('reg-leader-id-text').textContent = groupRegUID;
+  // Reset form
+  ['reg-first','reg-last','reg-email','reg-phone','reg-country','reg-city'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  ['reg-hp-suffix','reg-pp-suffix'].forEach(id => document.getElementById(id).value = '');
+  ['reg-hp-wrap','reg-pp-wrap'].forEach(id => document.getElementById(id).classList.remove('valid','invalid'));
+  ['reg-hp-icon','reg-pp-icon'].forEach(id => document.getElementById(id).innerHTML = '');
+  ['reg-hp-result','reg-pp-result'].forEach(id => document.getElementById(id).classList.remove('show'));
+  regVerifiedHP = null; regVerifiedPP = null;
+}
+
+function cancelGroupReg() {
+  document.getElementById('entry-reg-form').style.display = 'none';
+  document.getElementById('entry-group-banner').style.display = 'block';
+}
+
+function onRegHPInput(input) {
+  input.value = input.value.replace(/[^0-9]/g, '').slice(0, 5);
+  clearTimeout(regHPTimer);
+  regVerifiedHP = null;
+  document.getElementById('reg-hp-wrap').classList.remove('valid', 'invalid');
+  document.getElementById('reg-hp-icon').innerHTML = '';
+  document.getElementById('reg-hp-result').classList.remove('show');
+  if (input.value.length < 5) return;
+  document.getElementById('reg-hp-icon').innerHTML = '<div class="spinner"></div>';
+  const uid = 'BLG-' + input.value.padStart(5, '0');
+  regHPTimer = setTimeout(() => lookupRegLeader(uid, 'hp'), 500);
+}
+
+function onRegPPInput(input) {
+  input.value = input.value.replace(/[^0-9]/g, '').slice(0, 5);
+  clearTimeout(regPPTimer);
+  regVerifiedPP = null;
+  document.getElementById('reg-pp-wrap').classList.remove('valid', 'invalid');
+  document.getElementById('reg-pp-icon').innerHTML = '';
+  document.getElementById('reg-pp-result').classList.remove('show');
+  if (input.value.length < 5) return;
+  document.getElementById('reg-pp-icon').innerHTML = '<div class="spinner"></div>';
+  const uid = 'BLG-' + input.value.padStart(5, '0');
+  regPPTimer = setTimeout(() => lookupRegLeader(uid, 'pp'), 500);
+}
+
+async function lookupRegLeader(uid, which) {
+  const wrapId   = 'reg-' + which + '-wrap';
+  const iconId   = 'reg-' + which + '-icon';
+  const resultId = 'reg-' + which + '-result';
+  const nameId   = 'reg-' + which + '-name';
+  const metaId   = 'reg-' + which + '-meta';
+  try {
+    const data = await apiGet({ type: 'lookupLeader', uid });
+    document.getElementById(iconId).innerHTML = '';
+    if (data.found) {
+      document.getElementById(wrapId).classList.add('valid');
+      document.getElementById(iconId).innerHTML = '<span style="color:var(--success);font-size:18px">✓</span>';
+      const name = (data.first || data.firstName || '') + ' ' + (data.last || data.lastName || '');
+      document.getElementById(nameId).textContent = name.trim() || uid;
+      document.getElementById(metaId).textContent = uid;
+      document.getElementById(resultId).classList.add('show');
+      const obj = { uid, first: data.first || data.firstName || '', last: data.last || data.lastName || '' };
+      if (which === 'hp') regVerifiedHP = obj; else regVerifiedPP = obj;
+    } else {
+      document.getElementById(wrapId).classList.add('invalid');
+      document.getElementById(iconId).innerHTML = '<span style="color:var(--error);font-size:18px">✗</span>';
+      document.getElementById(nameId).textContent = 'Not found';
+      document.getElementById(metaId).textContent = uid + ' is not a registered leader.';
+      document.getElementById(resultId).classList.add('show');
+    }
+  } catch(e) { document.getElementById(iconId).innerHTML = ''; }
+}
+
+async function submitGroupLeaderReg() {
+  const first   = document.getElementById('reg-first').value.trim();
+  const last    = document.getElementById('reg-last').value.trim();
+  const email   = document.getElementById('reg-email').value.trim();
+  const phone   = document.getElementById('reg-phone').value.trim();
+  const country = document.getElementById('reg-country').value.trim();
+  const city    = document.getElementById('reg-city').value.trim();
+  if (!first || !last || !email || !phone || !country || !city) {
+    showToast('Please fill in all required fields.', 'error'); return;
+  }
+  const btn = document.getElementById('reg-submit-btn');
+  btn.disabled = true; btn.textContent = 'Registering…';
+  try {
+    const payload = { type: 'registerLeader', firstName: first, lastName: last, email, phone, country, city, takeoverGroupUID: groupRegUID };
+    if (regVerifiedHP) payload.hubPastor = regVerifiedHP.uid;
+    if (regVerifiedPP) payload.partnerPastor = regVerifiedPP.uid;
+    const data = await apiPost(payload);
+    if (data.success) {
+      showToast('Account created! Logging you in as ' + groupRegUID, 'success');
+      session = { uid: groupRegUID, first, last, role: '', reportsTo: regVerifiedHP ? regVerifiedHP.uid : (regVerifiedPP ? regVerifiedPP.uid : '') };
+      localData = loadLocal(groupRegUID);
+      document.getElementById('entry-reg-form').style.display = 'none';
+      document.getElementById('entry-group-banner').style.display = 'none';
+      document.getElementById('entry-screen').style.display = 'none';
+      document.getElementById('dashboard-screen').style.display = 'block';
+      renderDashboard();
+    } else {
+      showToast(data.message || 'Registration failed.', 'error');
+      btn.disabled = false; btn.textContent = 'Create Leader Account →';
+    }
+  } catch(e) {
+    showToast('Connection error — please try again.', 'error');
+    btn.disabled = false; btn.textContent = 'Create Leader Account →';
+  }
 }
 
 // ── Dashboard ──────────────────────────────────────────────────────
