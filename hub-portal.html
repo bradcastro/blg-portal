@@ -111,6 +111,22 @@
   .role-btn .role-name { display: block; font-size: 13px; font-weight: 700; }
   .role-btn .role-desc { display: block; font-size: 11px; color: inherit; opacity: 0.7; margin-top: 2px; }
 
+  /* Entry step role choice */
+  .rc-grid { display: flex; gap: 10px; margin: 12px 0 8px; }
+  .rc-btn { flex: 1; padding: 14px 10px; border: 2px solid var(--border); border-radius: var(--r); background: var(--white); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.18s; text-align: center; }
+  .rc-btn:hover { border-color: var(--navy); }
+  .rc-btn.selected { border-color: var(--navy); background: var(--navy); color: #fff; }
+  .rc-btn .rc-icon { font-size: 26px; display: block; margin-bottom: 5px; }
+  .rc-btn .rc-name { display: block; font-size: 13px; font-weight: 700; }
+  .rc-btn .rc-desc { display: block; font-size: 11px; opacity: 0.65; margin-top: 2px; }
+  .entry-step { text-align: left; margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 16px; }
+  .entry-step-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+  .entry-step h3 { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--navy); margin-bottom: 3px; }
+  .entry-step p { font-size: 13px; color: var(--muted); margin-bottom: 0; }
+  .optional-pill { display: inline-block; background: var(--cream-dk); border-radius: 20px; padding: 1px 8px; font-size: 11px; color: var(--muted); font-weight: 600; margin-left: 4px; vertical-align: middle; }
+  .skip-link { background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; padding: 6px 0 0; display: block; width: 100%; text-align: center; font-family: 'DM Sans', sans-serif; }
+  .skip-link:hover { color: var(--navy); }
+
   /* Section */
   .section-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
   .section-heading h3 { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--navy); }
@@ -239,6 +255,51 @@
         <div class="lmeta" id="entry-meta"></div>
       </div>
     </div>
+
+    <!-- Step 2: Role picker (shown when leader has no role) -->
+    <div id="entry-step-2" class="entry-step" style="display:none">
+      <div class="entry-step-label">Step 2 of 2</div>
+      <h3>Welcome, <span id="entry-leader-name">Leader</span>!</h3>
+      <p>Choose your leadership role to get started:</p>
+      <div class="rc-grid">
+        <button class="rc-btn" id="rc-hp" onclick="chooseEntryRole('Hub Pastor')">
+          <span class="rc-icon">🏛</span>
+          <span class="rc-name">Hub Pastor</span>
+          <span class="rc-desc">I oversee Partner Pastors</span>
+        </button>
+        <button class="rc-btn" id="rc-pp" onclick="chooseEntryRole('Partner Pastor')">
+          <span class="rc-icon">🤝</span>
+          <span class="rc-name">Partner Pastor</span>
+          <span class="rc-desc">I lead BLG Groups</span>
+        </button>
+      </div>
+      <button class="skip-link" onclick="skipRoleSetup()">Skip for now →</button>
+    </div>
+
+    <!-- Step 3: Optional Hub Pastor (PP flow) -->
+    <div id="entry-step-3" class="entry-step" style="display:none">
+      <div class="entry-step-label">Optional</div>
+      <h3>Your Hub Pastor <span class="optional-pill">Optional</span></h3>
+      <p style="margin-bottom:12px">Do you report to a Hub Pastor? Enter their BLG ID if you do.</p>
+      <div class="blg-field" style="margin-bottom:6px">
+        <label for="ehp-suffix">Hub Pastor BLG ID</label>
+        <div class="blg-input-wrap" id="ehp-wrap">
+          <span class="blg-prefix">BLG-</span>
+          <div class="id-wrap">
+            <input type="text" class="blg-suffix-input" id="ehp-suffix"
+              placeholder="00001" maxlength="5" inputmode="numeric" pattern="[0-9]*"
+              oninput="onEHPInput(this)" autocomplete="off">
+            <span class="id-status" id="ehp-icon"></span>
+          </div>
+        </div>
+        <div class="assign-result" id="ehp-result">
+          <div class="ar-name" id="ehp-name"></div>
+          <div class="ar-meta" id="ehp-meta"></div>
+        </div>
+      </div>
+      <button class="skip-link" onclick="skipHPAssign()">Skip for now →</button>
+    </div>
+
     <button class="btn btn-primary" id="enter-btn" onclick="enterPortal()" disabled>Enter Portal →</button>
   </div>
 </div>
@@ -255,6 +316,7 @@
     </div>
     <div class="dash-actions">
       <button class="btn btn-outline btn-sm" onclick="openReportModal()">📊 Report</button>
+      <button class="btn btn-outline btn-sm" id="elevate-hp-btn" onclick="elevateToHubPastor()" style="display:none;border-color:var(--gold);color:var(--gold)">🏛 Become Hub Pastor</button>
       <button class="btn btn-ghost btn-sm" onclick="openRoleModal()">⚙ Settings</button>
       <button class="btn btn-ghost btn-sm" onclick="signOut()">← Exit</button>
     </div>
@@ -541,6 +603,10 @@ const API = 'https://script.google.com/macros/s/AKfycbxmSUtTk50by7M-Y3-RuTrRlnUj
 
 let session = null; // { uid, first, last, role, reportsTo }
 let localData = {}; // cached localStorage data
+let entryRole = null;  // role chosen during login flow
+let entryHP = null;    // hub pastor chosen during login flow
+let ehpTimer = null;
+let verifiedEntryHP = null;
 
 // ── LocalStorage helpers ──────────────────────────────────────────
 function lsKey(uid)  { return 'blg-hub-' + uid; }
@@ -598,6 +664,16 @@ async function lookupEntry(uid) {
     if (data.found) {
       session = { uid, first: data.first || data.firstName || '', last: data.last || data.lastName || '', role: data.role || '', reportsTo: data.reportsTo || '' };
       setEntryState('found', { ...session, uid });
+      // Reset entry role/HP state
+      entryRole = null; entryHP = null; verifiedEntryHP = null;
+      document.getElementById('entry-step-2').style.display = 'none';
+      document.getElementById('entry-step-3').style.display = 'none';
+      if (!session.role) {
+        // No role set — show role picker before entering portal
+        document.getElementById('entry-leader-name').textContent = session.first;
+        document.getElementById('entry-step-2').style.display = 'block';
+        document.getElementById('enter-btn').disabled = true;
+      }
     } else {
       setEntryState('notfound');
     }
@@ -607,12 +683,95 @@ async function lookupEntry(uid) {
   }
 }
 
+function chooseEntryRole(role) {
+  entryRole = role;
+  document.getElementById('rc-hp').classList.toggle('selected', role === 'Hub Pastor');
+  document.getElementById('rc-pp').classList.toggle('selected', role === 'Partner Pastor');
+  if (role === 'Partner Pastor') {
+    document.getElementById('entry-step-2').style.display = 'none';
+    document.getElementById('entry-step-3').style.display = 'block';
+    // Keep Enter Portal disabled until they skip or choose HP
+  } else {
+    // Hub Pastor — no HP step needed
+    document.getElementById('entry-step-2').style.display = 'none';
+    document.getElementById('entry-step-3').style.display = 'none';
+    document.getElementById('enter-btn').disabled = false;
+  }
+}
+
+function skipRoleSetup() {
+  entryRole = null;
+  document.getElementById('entry-step-2').style.display = 'none';
+  document.getElementById('enter-btn').disabled = false;
+}
+
+function skipHPAssign() {
+  entryHP = null;
+  document.getElementById('entry-step-3').style.display = 'none';
+  document.getElementById('enter-btn').disabled = false;
+}
+
+// Entry Hub Pastor lookup (step 3)
+function onEHPInput(input) {
+  input.value = input.value.replace(/[^0-9]/g, '').slice(0, 5);
+  clearTimeout(ehpTimer);
+  verifiedEntryHP = null;
+  document.getElementById('ehp-wrap').classList.remove('valid', 'invalid');
+  document.getElementById('ehp-icon').innerHTML = '';
+  document.getElementById('ehp-result').classList.remove('show');
+  if (input.value.length < 5) return;
+  document.getElementById('ehp-icon').innerHTML = '<div class="spinner"></div>';
+  const uid = 'BLG-' + input.value.padStart(5, '0');
+  ehpTimer = setTimeout(() => lookupEntryHP(uid), 500);
+}
+
+async function lookupEntryHP(uid) {
+  try {
+    const data = await apiGet({ type: 'lookupLeader', uid });
+    document.getElementById('ehp-icon').innerHTML = '';
+    if (data.found) {
+      document.getElementById('ehp-wrap').classList.add('valid');
+      document.getElementById('ehp-icon').innerHTML = '<span style="color:var(--success);font-size:18px">✓</span>';
+      const name = (data.first || data.firstName || '') + ' ' + (data.last || data.lastName || '');
+      document.getElementById('ehp-name').textContent = name.trim() || uid;
+      document.getElementById('ehp-meta').textContent = uid + (data.city ? ' · ' + data.city : '');
+      document.getElementById('ehp-result').classList.add('show');
+      verifiedEntryHP = { uid, first: data.first || data.firstName || '', last: data.last || data.lastName || '' };
+      entryHP = verifiedEntryHP;
+      // Auto-enable Enter Portal once HP is confirmed
+      document.getElementById('enter-btn').disabled = false;
+    } else {
+      document.getElementById('ehp-wrap').classList.add('invalid');
+      document.getElementById('ehp-icon').innerHTML = '<span style="color:var(--error);font-size:18px">✗</span>';
+      document.getElementById('ehp-name').textContent = 'Leader not found';
+      document.getElementById('ehp-meta').textContent = uid + ' does not match any registered leader.';
+      document.getElementById('ehp-result').classList.add('show');
+    }
+  } catch(e) { document.getElementById('ehp-icon').innerHTML = ''; showToast('Connection error.', 'error'); }
+}
+
 function enterPortal() {
   if (!session) return;
-  // Merge any locally saved role/reportsTo into session
   localData = loadLocal(session.uid);
+
+  // Apply role chosen at login
+  if (entryRole) {
+    session.role = entryRole;
+    localData.role = entryRole;
+    apiPost({ type: 'setRole', uid: session.uid, role: entryRole }).catch(() => {});
+  }
   if (!session.role && localData.role) session.role = localData.role;
+
+  // Apply Hub Pastor chosen at login
+  if (entryHP) {
+    localData.hubPastor = entryHP;
+    localData.reportsTo = entryHP.uid;
+    session.reportsTo = entryHP.uid;
+    apiPost({ type: 'assignReportsTo', leaderUID: session.uid, supervisorUID: entryHP.uid }).catch(() => {});
+  }
   if (!session.reportsTo && localData.reportsTo) session.reportsTo = localData.reportsTo;
+
+  saveLocal(session.uid, localData);
   document.getElementById('entry-screen').style.display  = 'none';
   document.getElementById('dashboard-screen').style.display = 'block';
   renderDashboard();
@@ -654,16 +813,19 @@ function renderDashboard() {
   }
   document.getElementById('setup-prompt').style.display = 'none';
 
+  const elevateBtn = document.getElementById('elevate-hp-btn');
   if (role === 'Hub Pastor') {
     document.getElementById('hp-view').style.display = 'block';
     document.getElementById('pp-view').style.display = 'none';
     document.getElementById('hp-assign-section').style.display = 'block';
+    if (elevateBtn) elevateBtn.style.display = 'none';
     renderHPAssignSection();
     renderHPView();
   } else {
     document.getElementById('pp-view').style.display = 'block';
     document.getElementById('hp-view').style.display = 'none';
     document.getElementById('hp-assign-section').style.display = 'block';
+    if (elevateBtn) elevateBtn.style.display = '';
     renderHPAssignSection();
     renderPPView();
   }
@@ -783,6 +945,12 @@ function setRole(role) {
   closeModal('role-modal');
   renderDashboard();
   showToast('Role set to ' + role + '.', 'success');
+  apiPost({ type: 'setRole', uid: session.uid, role }).catch(() => {});
+}
+
+function elevateToHubPastor() {
+  if (!confirm('Elevate your account to Hub Pastor? You will be able to add and manage Partner Pastors.')) return;
+  setRole('Hub Pastor');
 }
 
 // ── Add Group modal (PP) ──────────────────────────────────────────
@@ -960,6 +1128,7 @@ function confirmAssignHP() {
   renderHPAssignSection();
   if (session.role === 'Partner Pastor') renderPPView();
   showToast('Hub Pastor assigned!', 'success');
+  apiPost({ type: 'assignReportsTo', leaderUID: session.uid, supervisorUID: verifiedHP.uid }).catch(() => {});
 }
 
 // ── Check-in ──────────────────────────────────────────────────────
