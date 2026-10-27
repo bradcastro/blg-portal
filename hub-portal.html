@@ -189,6 +189,28 @@
   .report-table tr:last-child td { border-bottom: none; }
   .report-table tr:hover td { background: var(--cream); }
 
+  /* Admin report tabs */
+  .ar-tabs { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 0; }
+  .ar-tab { background: none; border: none; border-bottom: 3px solid transparent; margin-bottom: -2px; padding: 8px 16px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; transition: color .15s, border-color .15s; font-family: 'DM Sans', sans-serif; }
+  .ar-tab.active { color: var(--navy); border-bottom-color: var(--gold); }
+  /* Hierarchy tree */
+  .hier-hub { background: var(--navy); color: #fff; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; }
+  .hier-hub-name { font-size: 15px; font-weight: 700; }
+  .hier-hub-meta { font-size: 11px; opacity: .7; margin-top: 2px; }
+  .hier-pp-list { padding: 0 0 0 16px; }
+  .hier-pp { background: var(--cream-dark, #F0EBE1); border-radius: 6px; padding: 10px 14px; margin: 6px 0; border-left: 3px solid var(--gold); }
+  .hier-pp-name { font-size: 13px; font-weight: 700; color: var(--navy); }
+  .hier-pp-meta { font-size: 11px; color: var(--muted); margin: 2px 0 6px; }
+  .hier-groups { display: flex; flex-wrap: wrap; gap: 6px; }
+  .hier-group-chip { background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 4px 10px; font-size: 11px; color: var(--navy); display: flex; align-items: center; gap: 5px; }
+  .hier-group-chip .ci-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+  .hier-group-chip .ci-dot.active { background: #22c55e; }
+  .hier-scroll { max-height: 480px; overflow-y: auto; }
+  .hier-unassigned { background: #fff8ed; border: 1px solid #f0c96a; border-radius: 8px; padding: 12px 16px; margin-top: 12px; }
+  .hier-section-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 8px; }
+  .ar-summary-bar { display: flex; gap: 20px; flex-wrap: wrap; background: var(--cream); border-radius: 8px; padding: 10px 16px; margin-bottom: 14px; font-size: 12px; }
+  .ar-summary-bar span { color: var(--navy); font-weight: 700; }
+
   /* Toast */
   #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); background: var(--navy); color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500; box-shadow: var(--shadow-lg); opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 1000; white-space: nowrap; max-width: calc(100vw - 48px); text-align: center; }
   #toast.show { opacity: 1; }
@@ -408,6 +430,7 @@
     </div>
     <div class="dash-actions">
       <button class="btn btn-outline btn-sm" onclick="openReportModal()">📊 Report</button>
+      <button class="btn btn-outline btn-sm" onclick="openAdminReports()" style="border-color:var(--teal);color:var(--teal)">🌐 Network Reports</button>
       <button class="btn btn-outline btn-sm" id="elevate-hp-btn" onclick="elevateToHubPastor()" style="display:none;border-color:var(--gold);color:var(--gold)">🏛 Become Hub Pastor</button>
       <button class="btn btn-ghost btn-sm" onclick="openRoleModal()">⚙ Settings</button>
       <button class="btn btn-ghost btn-sm" onclick="signOut()">← Exit</button>
@@ -684,6 +707,42 @@
     </div>
     <button class="btn btn-navy btn-sm" style="margin-bottom:14px" onclick="runReport()">Run Report</button>
     <div id="report-results"><div class="empty-state"><p>Select a date range and click Run Report.</p></div></div>
+  </div>
+</div>
+
+<!-- Admin / Network Reports -->
+<div class="modal-overlay" id="admin-report-modal">
+  <div class="modal" style="max-width:780px;width:95vw">
+    <button class="modal-close" onclick="closeModal('admin-report-modal')">✕</button>
+    <div class="modal-title">Network Reports</div>
+    <div class="modal-sub">Global view across all Hub Pastors, Partner Pastors, and Groups.</div>
+
+    <!-- Tabs -->
+    <div class="ar-tabs">
+      <button class="ar-tab active" id="ar-tab-hier" onclick="switchArTab('hier')">🏛 Hierarchy</button>
+      <button class="ar-tab" id="ar-tab-inactive" onclick="switchArTab('inactive')">⚠ Inactive Groups</button>
+    </div>
+
+    <!-- Hierarchy Tab -->
+    <div id="ar-pane-hier">
+      <button class="btn btn-navy btn-sm" style="margin-bottom:14px" onclick="runHierarchyReport()">Run Hierarchy Report</button>
+      <div id="ar-hier-results"><div class="empty-state"><p>Click "Run Hierarchy Report" to load the full network tree.</p></div></div>
+    </div>
+
+    <!-- Inactive Groups Tab -->
+    <div id="ar-pane-inactive" style="display:none">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+        <label style="font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.05em">No check-in in last</label>
+        <select class="form-input" id="ar-inactive-weeks" style="width:100px;height:36px;font-size:14px">
+          <option value="2">2 weeks</option>
+          <option value="4" selected>4 weeks</option>
+          <option value="8">8 weeks</option>
+          <option value="12">12 weeks</option>
+        </select>
+        <button class="btn btn-navy btn-sm" onclick="runInactiveReport()">Run Report</button>
+      </div>
+      <div id="ar-inactive-results"><div class="empty-state"><p>Select a time window and click Run Report.</p></div></div>
+    </div>
   </div>
 </div>
 
@@ -1497,6 +1556,115 @@ async function runReport() {
     </table></div>`;
   } catch(e) {
     container.innerHTML = '<div class="empty-state"><p>Report not yet available. Update Apps Script to enable cloud reports.</p></div>';
+  }
+}
+
+// ── Admin / Network Reports ───────────────────────────────────────
+function openAdminReports() {
+  switchArTab('hier');
+  document.getElementById('ar-hier-results').innerHTML = '<div class="empty-state"><p>Click "Run Hierarchy Report" to load the full network tree.</p></div>';
+  document.getElementById('ar-inactive-results').innerHTML = '<div class="empty-state"><p>Select a time window and click Run Report.</p></div>';
+  openModal('admin-report-modal');
+}
+
+function switchArTab(tab) {
+  ['hier','inactive'].forEach(t => {
+    document.getElementById('ar-tab-' + t).classList.toggle('active', t === tab);
+    document.getElementById('ar-pane-' + t).style.display = t === tab ? '' : 'none';
+  });
+}
+
+async function runHierarchyReport() {
+  const container = document.getElementById('ar-hier-results');
+  container.innerHTML = '<div class="loading-wrap" style="padding:32px"><div class="big-spinner" style="width:24px;height:24px;border-width:2px"></div><p style="margin-top:12px;color:var(--muted);font-size:13px">Loading network hierarchy…</p></div>';
+  try {
+    const data = await apiGet({ type: 'getAllHierarchy' });
+    const hubs = data.hubPastors || [];
+    const unassigned = data.unassigned || [];
+    if (!hubs.length && !unassigned.length) {
+      container.innerHTML = '<div class="empty-state"><p>No leaders found. Make sure leaders have roles assigned in the spreadsheet.</p></div>';
+      return;
+    }
+    // Summary counts
+    let totalPPs = 0, totalGroups = 0, totalCI = 0;
+    hubs.forEach(h => {
+      h.partnerPastors.forEach(pp => { totalPPs++; pp.groups.forEach(g => { totalGroups++; totalCI += g.checkinsThisWeek; }); });
+      h.directGroups.forEach(g => { totalGroups++; totalCI += g.checkinsThisWeek; });
+    });
+    unassigned.forEach(pp => { totalPPs++; pp.groups.forEach(g => { totalGroups++; totalCI += g.checkinsThisWeek; }); });
+
+    function groupChips(groups) {
+      if (!groups.length) return '<span style="font-size:11px;color:var(--muted)">No active groups</span>';
+      return groups.map(g => `<span class="hier-group-chip">
+        <span class="ci-dot ${g.checkinsThisWeek > 0 ? 'active' : ''}"></span>
+        ${g.uid}${g.name ? ' · ' + g.name : ''}${g.checkinsThisWeek > 0 ? ' <b style="color:#16a34a">(' + g.checkinsThisWeek + ')</b>' : ''}
+      </span>`).join('');
+    }
+
+    function ppBlock(pp) {
+      return `<div class="hier-pp">
+        <div class="hier-pp-name">${pp.firstName} ${pp.lastName} <span style="font-weight:400;color:var(--muted)">${pp.uid}</span></div>
+        <div class="hier-pp-meta">${[pp.city, pp.country].filter(Boolean).join(', ')} · ${pp.groups.length} group${pp.groups.length !== 1 ? 's' : ''}</div>
+        <div class="hier-groups">${groupChips(pp.groups)}</div>
+      </div>`;
+    }
+
+    const hubBlocks = hubs.map(h => `
+      <div class="hier-hub">
+        <div class="hier-hub-name">🏛 ${h.firstName} ${h.lastName} <span style="font-weight:400;opacity:.8;font-size:13px">${h.uid}</span></div>
+        <div class="hier-hub-meta">${[h.city, h.country].filter(Boolean).join(', ')} · ${h.partnerPastors.length} PP${h.partnerPastors.length !== 1 ? 's' : ''} · ${h.directGroups.length} direct group${h.directGroups.length !== 1 ? 's' : ''}</div>
+        ${h.directGroups.length ? `<div style="margin-top:8px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;opacity:.7;margin-bottom:5px">Direct Groups</div><div class="hier-groups">${groupChips(h.directGroups)}</div></div>` : ''}
+      </div>
+      ${h.partnerPastors.length ? `<div class="hier-pp-list">${h.partnerPastors.map(ppBlock).join('')}</div>` : '<div style="padding:0 0 8px 16px;font-size:12px;color:var(--muted)">No Partner Pastors assigned</div>'}
+    `).join('');
+
+    const unassignedBlock = unassigned.length ? `
+      <div class="hier-unassigned">
+        <div class="hier-section-label">⚠ Unassigned Leaders (${unassigned.length})</div>
+        ${unassigned.map(ppBlock).join('')}
+      </div>` : '';
+
+    container.innerHTML = `
+      <div class="ar-summary-bar">
+        <div>Hub Pastors: <span>${hubs.length}</span></div>
+        <div>Partner Pastors: <span>${totalPPs}</span></div>
+        <div>Active Groups: <span>${totalGroups}</span></div>
+        <div>Check-ins this week: <span style="color:#16a34a">${totalCI}</span></div>
+      </div>
+      <div class="hier-scroll">${hubBlocks}${unassignedBlock}</div>`;
+  } catch(e) {
+    container.innerHTML = '<div class="empty-state"><p>Error loading hierarchy. Check Apps Script deployment.</p></div>';
+  }
+}
+
+async function runInactiveReport() {
+  const weeks = document.getElementById('ar-inactive-weeks').value;
+  const container = document.getElementById('ar-inactive-results');
+  container.innerHTML = '<div class="loading-wrap" style="padding:32px"><div class="big-spinner" style="width:24px;height:24px;border-width:2px"></div><p style="margin-top:12px;color:var(--muted);font-size:13px">Scanning for inactive groups…</p></div>';
+  try {
+    const data = await apiGet({ type: 'getInactiveGroups', weeks });
+    const groups = data.groups || [];
+    if (!groups.length) {
+      container.innerHTML = `<div class="empty-state"><p>Great news — all active groups have checked in within the last ${weeks} weeks.</p></div>`;
+      return;
+    }
+    container.innerHTML = `
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">${groups.length} group${groups.length !== 1 ? 's' : ''} with no check-in since ${data.cutoffDate || weeks + ' weeks ago'}.</div>
+      <div class="report-table-wrap" style="max-height:420px">
+        <table class="report-table">
+          <thead><tr><th>Group ID</th><th>Name</th><th>Location</th><th>Leader</th><th>Created</th></tr></thead>
+          <tbody>${groups.map(g => `<tr>
+            <td style="font-weight:700;color:var(--gold)">${g.uid}</td>
+            <td>${g.name || '—'}</td>
+            <td style="font-size:12px;color:var(--muted)">${[g.city, g.country].filter(Boolean).join(', ') || '—'}</td>
+            <td style="font-size:12px">${g.leaderName || g.leaderUID || '—'}</td>
+            <td style="font-size:12px;color:var(--muted)">${g.created || '—'}</td>
+          </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  } catch(e) {
+    container.innerHTML = '<div class="empty-state"><p>Error loading inactive groups report.</p></div>';
   }
 }
 
