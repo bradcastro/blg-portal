@@ -182,7 +182,10 @@
   .modal-actions .btn { flex: 1; }
 
   /* Report */
-  .report-table-wrap { max-height: 300px; overflow-y: auto; margin-top: 8px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
+  .report-table-wrap { max-height: min(420px, 55vh); margin-top: 8px; border-radius: 6px; border: 1px solid var(--border); overflow: auto; -webkit-overflow-scrolling: touch; }
+  .report-note { font-size: 12px; color: var(--muted); margin: 0 0 10px; }
+  #report-modal.open, #admin-report-modal.open { overflow-y: auto; align-items: flex-start; }
+  #report-modal .modal, #admin-report-modal .modal { margin: 24px auto; }
   .report-table { width: 100%; border-collapse: collapse; font-size: 13px; }
   .report-table th { background: var(--navy); color: #fff; text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; position: sticky; top: 0; }
   .report-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); }
@@ -429,8 +432,8 @@
       <div class="uid-text" id="dash-uid"></div>
     </div>
     <div class="dash-actions">
-      <button class="btn btn-outline btn-sm" onclick="openReportModal()">📊 Report</button>
-      <button class="btn btn-outline btn-sm" onclick="openAdminReports()" style="border-color:var(--teal);color:var(--teal)">🌐 Network Reports</button>
+      <button type="button" class="btn btn-outline btn-sm" onclick="openReportModal()">📊 Report</button>
+      <button type="button" class="btn btn-outline btn-sm" onclick="openAdminReports()" style="border-color:var(--teal);color:var(--teal)">🌐 Network Reports</button>
       <button class="btn btn-outline btn-sm" id="elevate-hp-btn" onclick="elevateToHubPastor()" style="display:none;border-color:var(--gold);color:var(--gold)">🏛 Become Hub Pastor</button>
       <button class="btn btn-ghost btn-sm" onclick="openRoleModal()">⚙ Settings</button>
       <button class="btn btn-ghost btn-sm" onclick="signOut()">← Exit</button>
@@ -705,7 +708,7 @@
       <div class="form-row" style="flex:1;margin:0"><label>From</label><input type="date" class="form-input" id="report-start"></div>
       <div class="form-row" style="flex:1;margin:0"><label>To</label><input type="date" class="form-input" id="report-end"></div>
     </div>
-    <button class="btn btn-navy btn-sm" style="margin-bottom:14px" onclick="runReport()">Run Report</button>
+    <button type="button" class="btn btn-navy btn-sm" style="margin-bottom:14px" onclick="runReport()">Run Report</button>
     <div id="report-results"><div class="empty-state"><p>Select a date range and click Run Report.</p></div></div>
   </div>
 </div>
@@ -715,7 +718,7 @@
   <div class="modal" style="max-width:780px;width:95vw">
     <button class="modal-close" onclick="closeModal('admin-report-modal')">✕</button>
     <div class="modal-title">Network Reports</div>
-    <div class="modal-sub">Global view across all Hub Pastors, Partner Pastors, and Groups.</div>
+    <div class="modal-sub">Your groups and the leaders who report to you.</div>
 
     <!-- Tabs -->
     <div class="ar-tabs">
@@ -725,7 +728,7 @@
 
     <!-- Hierarchy Tab -->
     <div id="ar-pane-hier">
-      <button class="btn btn-navy btn-sm" style="margin-bottom:14px" onclick="runHierarchyReport()">Run Hierarchy Report</button>
+      <button type="button" class="btn btn-navy btn-sm" style="margin-bottom:14px" onclick="runHierarchyReport()">Run Hierarchy Report</button>
       <div id="ar-hier-results"><div class="empty-state"><p>Click "Run Hierarchy Report" to load the full network tree.</p></div></div>
     </div>
 
@@ -739,7 +742,7 @@
           <option value="8">8 weeks</option>
           <option value="12">12 weeks</option>
         </select>
-        <button class="btn btn-navy btn-sm" onclick="runInactiveReport()">Run Report</button>
+        <button type="button" class="btn btn-navy btn-sm" onclick="runInactiveReport()">Run Report</button>
       </div>
       <div id="ar-inactive-results"><div class="empty-state"><p>Select a time window and click Run Report.</p></div></div>
     </div>
@@ -749,10 +752,12 @@
 <div id="toast"></div>
 
 <!-- ════════════════════════════════ SCRIPT ════════════════════════════════ -->
+<script src="blg-reports.js"></script>
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbxmSUtTk50by7M-Y3-RuTrRlnUjw42UwsFDm2PavJmmsp9cbDoh2_qdVLL7IvpFjisB9A/exec';
 
 let session = null; // { uid, first, last, role, reportsTo }
+let lastReportRows = [];
 let localData = {}; // cached localStorage data
 let entryRole = null;  // role chosen during login flow
 let entryHP = null;    // hub pastor chosen during login flow
@@ -1524,45 +1529,55 @@ async function submitCheckin() {
 
 // ── Report ────────────────────────────────────────────────────────
 function openReportModal() {
-  const today = new Date();
-  const month = new Date(today.getFullYear(), today.getMonth(), 1);
-  document.getElementById('report-end').value   = today.toISOString().split('T')[0];
-  document.getElementById('report-start').value = month.toISOString().split('T')[0];
+  const range = BLGReports.defaultReportRange(new Date());
+  document.getElementById('report-end').value = range.end;
+  document.getElementById('report-start').value = range.start;
   document.getElementById('report-results').innerHTML = '<div class="empty-state"><p>Select a date range and click Run Report.</p></div>';
+  lastReportRows = [];
   openModal('report-modal');
 }
 
+function downloadLastReport() {
+  if (!lastReportRows.length) return;
+  const blob = new Blob([BLGReports.toCsv(lastReportRows)], { type: 'text/csv;charset=utf-8' });
+  const link = document.createElement('a');
+  const uid = session && session.uid ? session.uid : 'leader';
+  link.href = URL.createObjectURL(blob);
+  link.download = 'blg-checkin-report-' + uid + '.csv';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+}
+
 async function runReport() {
+  if (!session || !session.uid) { showToast('Enter your BLG Leader ID first.', 'error'); return; }
   const start = document.getElementById('report-start').value;
-  const end   = document.getElementById('report-end').value;
+  const end = document.getElementById('report-end').value;
   if (!start || !end) { showToast('Please select a date range.', 'error'); return; }
+  if (start > end) { showToast('The start date must be on or before the end date.', 'error'); return; }
   const container = document.getElementById('report-results');
   container.innerHTML = '<div class="loading-wrap" style="padding:24px"><div class="big-spinner" style="width:24px;height:24px;border-width:2px"></div></div>';
   try {
     const data = await apiGet({ type: 'getCheckinReport', uid: session.uid, startDate: start, endDate: end });
-    const rows = data.rows || [];
-    if (!rows.length) {
-      container.innerHTML = '<div class="empty-state"><p>No check-ins found in this date range.</p></div>';
+    const error = BLGReports.checkinError(data);
+    if (error) {
+      lastReportRows = [];
+      container.innerHTML = '<div class="empty-state"><p>' + BLGReports.escapeHtml(error) + '</p></div>';
       return;
     }
-    container.innerHTML = `<div class="report-table-wrap"><table class="report-table">
-      <thead><tr><th>Date</th><th>Group</th><th>Leader</th><th style="text-align:center">Attendees</th></tr></thead>
-      <tbody>${rows.map(r => `<tr>
-        <td>${r.date||''}</td>
-        <td>${r.groupName||r.groupUID||''}</td>
-        <td>${r.leaderName||r.leaderUID||''}</td>
-        <td style="text-align:center;font-weight:700">${r.attendees||''}</td>
-      </tr>`).join('')}</tbody>
-    </table></div>`;
-  } catch(e) {
-    container.innerHTML = '<div class="empty-state"><p>Report not yet available. Update Apps Script to enable cloud reports.</p></div>';
+    lastReportRows = BLGReports.publicCheckinRows(data.rows);
+    container.innerHTML = BLGReports.renderCheckinReport(lastReportRows);
+  } catch (e) {
+    lastReportRows = [];
+    container.innerHTML = '<div class="empty-state"><p>Could not load the report. Check your connection and try again.</p></div>';
   }
 }
 
 // ── Admin / Network Reports ───────────────────────────────────────
 function openAdminReports() {
   switchArTab('hier');
-  document.getElementById('ar-hier-results').innerHTML = '<div class="empty-state"><p>Click "Run Hierarchy Report" to load the full network tree.</p></div>';
+  document.getElementById('ar-hier-results').innerHTML = '<div class="empty-state"><p>Click "Run Hierarchy Report" to load your network.</p></div>';
   document.getElementById('ar-inactive-results').innerHTML = '<div class="empty-state"><p>Select a time window and click Run Report.</p></div>';
   openModal('admin-report-modal');
 }
@@ -1575,96 +1590,50 @@ function switchArTab(tab) {
 }
 
 async function runHierarchyReport() {
+  if (!session || !session.uid) { showToast('Enter your BLG Leader ID first.', 'error'); return; }
   const container = document.getElementById('ar-hier-results');
-  container.innerHTML = '<div class="loading-wrap" style="padding:32px"><div class="big-spinner" style="width:24px;height:24px;border-width:2px"></div><p style="margin-top:12px;color:var(--muted);font-size:13px">Loading network hierarchy…</p></div>';
+  container.innerHTML = '<div class="loading-wrap" style="padding:32px"><div class="big-spinner" style="width:24px;height:24px;border-width:2px"></div><p style="margin-top:12px;color:var(--muted);font-size:13px">Loading your network…</p></div>';
   try {
-    const data = await apiGet({ type: 'getAllHierarchy' });
-    const hubs = data.hubPastors || [];
-    const unassigned = data.unassigned || [];
-    if (!hubs.length && !unassigned.length) {
-      container.innerHTML = '<div class="empty-state"><p>No leaders found. Make sure leaders have roles assigned in the spreadsheet.</p></div>';
-      return;
-    }
-    // Summary counts
-    let totalPPs = 0, totalGroups = 0, totalCI = 0;
-    hubs.forEach(h => {
-      h.partnerPastors.forEach(pp => { totalPPs++; pp.groups.forEach(g => { totalGroups++; totalCI += g.checkinsThisWeek; }); });
-      h.directGroups.forEach(g => { totalGroups++; totalCI += g.checkinsThisWeek; });
-    });
-    unassigned.forEach(pp => { totalPPs++; pp.groups.forEach(g => { totalGroups++; totalCI += g.checkinsThisWeek; }); });
-
-    function groupChips(groups) {
-      if (!groups.length) return '<span style="font-size:11px;color:var(--muted)">No active groups</span>';
-      return groups.map(g => `<span class="hier-group-chip">
-        <span class="ci-dot ${g.checkinsThisWeek > 0 ? 'active' : ''}"></span>
-        ${g.uid}${g.name ? ' · ' + g.name : ''}${g.checkinsThisWeek > 0 ? ' <b style="color:#16a34a">(' + g.checkinsThisWeek + ')</b>' : ''}
-      </span>`).join('');
-    }
-
-    function ppBlock(pp) {
-      return `<div class="hier-pp">
-        <div class="hier-pp-name">${pp.firstName} ${pp.lastName} <span style="font-weight:400;color:var(--muted)">${pp.uid}</span></div>
-        <div class="hier-pp-meta">${[pp.city, pp.country].filter(Boolean).join(', ')} · ${pp.groups.length} group${pp.groups.length !== 1 ? 's' : ''}</div>
-        <div class="hier-groups">${groupChips(pp.groups)}</div>
-      </div>`;
-    }
-
-    const hubBlocks = hubs.map(h => `
-      <div class="hier-hub">
-        <div class="hier-hub-name">🏛 ${h.firstName} ${h.lastName} <span style="font-weight:400;opacity:.8;font-size:13px">${h.uid}</span></div>
-        <div class="hier-hub-meta">${[h.city, h.country].filter(Boolean).join(', ')} · ${h.partnerPastors.length} PP${h.partnerPastors.length !== 1 ? 's' : ''} · ${h.directGroups.length} direct group${h.directGroups.length !== 1 ? 's' : ''}</div>
-        ${h.directGroups.length ? `<div style="margin-top:8px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;opacity:.7;margin-bottom:5px">Direct Groups</div><div class="hier-groups">${groupChips(h.directGroups)}</div></div>` : ''}
-      </div>
-      ${h.partnerPastors.length ? `<div class="hier-pp-list">${h.partnerPastors.map(ppBlock).join('')}</div>` : '<div style="padding:0 0 8px 16px;font-size:12px;color:var(--muted)">No Partner Pastors assigned</div>'}
-    `).join('');
-
-    const unassignedBlock = unassigned.length ? `
-      <div class="hier-unassigned">
-        <div class="hier-section-label">⚠ Unassigned Leaders (${unassigned.length})</div>
-        ${unassigned.map(ppBlock).join('')}
-      </div>` : '';
-
-    container.innerHTML = `
-      <div class="ar-summary-bar">
-        <div>Hub Pastors: <span>${hubs.length}</span></div>
-        <div>Partner Pastors: <span>${totalPPs}</span></div>
-        <div>Active Groups: <span>${totalGroups}</span></div>
-        <div>Check-ins this week: <span style="color:#16a34a">${totalCI}</span></div>
-      </div>
-      <div class="hier-scroll">${hubBlocks}${unassignedBlock}</div>`;
-  } catch(e) {
-    container.innerHTML = '<div class="empty-state"><p>Error loading hierarchy. Check Apps Script deployment.</p></div>';
+    const range = BLGReports.defaultReportRange(new Date());
+    const [data, report] = await Promise.all([
+      apiGet({ type: 'getHierarchy', uid: session.uid }),
+      apiGet({ type: 'getCheckinReport', uid: session.uid, startDate: range.start, endDate: range.end })
+    ]);
+    const checkins = BLGReports.checkinError(report) ? null : report.rows;
+    container.innerHTML = BLGReports.renderNetworkReport(data, session, checkins);
+  } catch (e) {
+    container.innerHTML = '<div class="empty-state"><p>Could not load your network report. Check your connection and try again.</p></div>';
   }
 }
 
 async function runInactiveReport() {
+  if (!session || !session.uid) { showToast('Enter your BLG Leader ID first.', 'error'); return; }
   const weeks = document.getElementById('ar-inactive-weeks').value;
   const container = document.getElementById('ar-inactive-results');
-  container.innerHTML = '<div class="loading-wrap" style="padding:32px"><div class="big-spinner" style="width:24px;height:24px;border-width:2px"></div><p style="margin-top:12px;color:var(--muted);font-size:13px">Scanning for inactive groups…</p></div>';
+  const cutoff = BLGReports.cutoffDate(new Date(), weeks);
+  const end = BLGReports.localISODate(new Date());
+  container.innerHTML = '<div class="loading-wrap" style="padding:32px"><div class="big-spinner" style="width:24px;height:24px;border-width:2px"></div><p style="margin-top:12px;color:var(--muted);font-size:13px">Scanning your network…</p></div>';
   try {
-    const data = await apiGet({ type: 'getInactiveGroups', weeks });
-    const groups = data.groups || [];
-    if (!groups.length) {
-      container.innerHTML = `<div class="empty-state"><p>Great news — all active groups have checked in within the last ${weeks} weeks.</p></div>`;
+    const discoverFrom = cutoff < (new Date().getFullYear() + '-01-01') ? cutoff : (new Date().getFullYear() + '-01-01');
+    const [hier, report] = await Promise.all([
+      apiGet({ type: 'getHierarchy', uid: session.uid }),
+      apiGet({ type: 'getCheckinReport', uid: session.uid, startDate: discoverFrom, endDate: end })
+    ]);
+    const scope = BLGReports.normalizeScopedHierarchy(hier, session);
+    if (!scope.ok) {
+      container.innerHTML = '<div class="empty-state"><p>' + BLGReports.escapeHtml(scope.message) + '</p></div>';
       return;
     }
-    container.innerHTML = `
-      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">${groups.length} group${groups.length !== 1 ? 's' : ''} with no check-in since ${data.cutoffDate || weeks + ' weeks ago'}.</div>
-      <div class="report-table-wrap" style="max-height:420px">
-        <table class="report-table">
-          <thead><tr><th>Group ID</th><th>Name</th><th>Location</th><th>Leader</th><th>Created</th></tr></thead>
-          <tbody>${groups.map(g => `<tr>
-            <td style="font-weight:700;color:var(--gold)">${g.uid}</td>
-            <td>${g.name || '—'}</td>
-            <td style="font-size:12px;color:var(--muted)">${[g.city, g.country].filter(Boolean).join(', ') || '—'}</td>
-            <td style="font-size:12px">${g.leaderName || g.leaderUID || '—'}</td>
-            <td style="font-size:12px;color:var(--muted)">${g.created || '—'}</td>
-          </tr>`).join('')}
-          </tbody>
-        </table>
-      </div>`;
-  } catch(e) {
-    container.innerHTML = '<div class="empty-state"><p>Error loading inactive groups report.</p></div>';
+    const error = BLGReports.checkinError(report);
+    if (error) {
+      container.innerHTML = '<div class="empty-state"><p>' + BLGReports.escapeHtml(error) + '</p></div>';
+      return;
+    }
+    BLGReports.addViewerGroupsFromCheckins(scope, report.rows, session.uid);
+    const inactive = BLGReports.inactiveGroupsInScope(BLGReports.groupsFromScope(scope, session), report.rows, cutoff);
+    container.innerHTML = BLGReports.renderInactiveReport(inactive, cutoff);
+  } catch (e) {
+    container.innerHTML = '<div class="empty-state"><p>Could not load the inactive groups report.</p></div>';
   }
 }
 
